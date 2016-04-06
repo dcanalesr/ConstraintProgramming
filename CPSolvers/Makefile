@@ -2,7 +2,7 @@
 
 all: 
 
-	g++ -c KcolorGraphNode.cpp KcolorGraphProblem.cpp BackTrack.cpp main.cpp
+	g++ -c -std=c++11 KcolorGraphNode.cpp KcolorGraphProblem.cpp BackTrack.cpp main.cpp
 	g++ -o CPSolvers  KcolorGraphNode.o KcolorGraphProblem.o BackTrack.o main.o
 
 #define clean

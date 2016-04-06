@@ -9,7 +9,7 @@ public:
 		int BestOFValue;
 
 
-		void initialize(int size);
+		void initialize(int size, int orderingHeuristicOption);
 		void initializeExample();
 		void checkSetBestSolution();
 		void restoreDomainsFromK(int k);
