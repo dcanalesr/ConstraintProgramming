@@ -59,6 +59,7 @@ void KcolorGraphNode::checkConstraintsPrint()
 			cout<< " Color: " << restriccionesIncumplidas[i]->Color <<endl;
 		}
 	}
+	cout << "------------------------------------------------"<<endl;
 }
 
 /*

@@ -47,8 +47,10 @@ void BackTrack::StartKcolor(){
 		//check if the graph finished instantiating all nodes.
 		if(i==this->kproblem.CurrentColorGraph.size()-1)
 		{
+
 			this->kproblem.checkSetBestSolution();
 			i--;
+			break; //REMOVE THIS IN ORDER TO GET A OPTIMIZATION PROBLEM.
 		}
 	}
 	this->kproblem.printFinalResults();
@@ -88,11 +90,13 @@ bool BackTrack::labelKColorNode(int n)
 			this->kproblem.CurrentColorGraph[n]->Color = this->kproblem.CurrentColorGraph[n]->temporalColorDomain[0];
 			this->kproblem.CurrentColorGraph[n]->temporalColorDomain.pop_front();
 
+			cout << "-----------------------------------------------------------------"<<endl;
 			cout << "++Instantiating the node: " << this->kproblem.CurrentColorGraph[n]->ID << " - color: " << this->kproblem.CurrentColorGraph[n]->Color << "++"<<endl;
 
 			this->kproblem.CurrentColorGraph[n]->checkConstraintsPrint();
 
-			return this->kproblem.CurrentColorGraph[n]->checkConstraintsBreak();
+			if(this->kproblem.CurrentColorGraph[n]->checkConstraintsBreak())
+				return true;
 		}
 	}
 	return false; //return false in the default case.
