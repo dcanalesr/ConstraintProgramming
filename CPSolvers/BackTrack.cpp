@@ -16,9 +16,14 @@ void BackTrack::StartKcolor(){
 	KcolorGraphProblem problem;
 
 	this->kproblem = problem;
+	int size = 5;
 	this->kproblem.initialize(5);
 
-	this->printAllDomainsKColorGraph();
+	if(size<10)
+	{
+		this->printAllDomainsKColorGraph();
+		this->printAllConstraintsKColorGraph();
+	}
 
 	//for each node in the color graph.
 	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
@@ -56,6 +61,9 @@ void BackTrack::StartKcolor(){
 	this->kproblem.printFinalResults();
 }
 
+/*
+ * Print in the screen domains of all nodes in the graph.
+ */
 void BackTrack::printAllDomainsKColorGraph()
 {
 	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
@@ -64,6 +72,19 @@ void BackTrack::printAllDomainsKColorGraph()
 	}
 	cout << "------------------------------------------------"<<endl;
 }
+
+/*
+ * Print in the screen constraints of all nodes in the graph.
+ */
+void BackTrack::printAllConstraintsKColorGraph()
+{
+	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
+	{
+		this->kproblem.CurrentColorGraph[i]->printConstraints();
+	}
+	cout << "------------------------------------------------"<<endl;
+}
+
 
 /*
  * Try to instantiate the node n in the graph, if any color of the domain couldn't be used

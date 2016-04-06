@@ -20,6 +20,7 @@ public:
 	bool checkConstraintsBreak();
 	void checkConstraintsPrint();
 	void printTemporalDomain();
+	void printConstraints();
 	/* restore the node's domain */
 	void restoreDomain();
 };

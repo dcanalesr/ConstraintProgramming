@@ -10,6 +10,7 @@ public:
 
 
 		void initialize(int size);
+		void initializeExample();
 		void checkSetBestSolution();
 		void restoreDomainsFromK(int k);
 		bool pastConsistent(int n);

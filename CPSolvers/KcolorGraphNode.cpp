@@ -91,12 +91,24 @@ void KcolorGraphNode::restoreDomain()
 }
 
 /*
- * Print in the screen the temporal domain node.
+ * Print in the screen the temporal domain of the current node.
  */
 void KcolorGraphNode::printTemporalDomain(){
 	cout <<"Domain of the node: " <<this->ID <<endl;
 	for(int i=0;i<this->temporalColorDomain.size();i++)
 	{
 		cout << pTab << "Color: "<< this->temporalColorDomain[i] << endl;
+	}
+}
+
+/*
+ * Print in the screen the constraints of the current node.
+ */
+void KcolorGraphNode::printConstraints()
+{
+	cout <<"Domain of the node: " <<this->ID <<endl;
+	for(int i=0;i<this->constraints.size();i++)
+	{
+		cout << pTab << "Arc constraint with node: "<< this->constraints[i]->ID << endl;
 	}
 }
