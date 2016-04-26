@@ -24,6 +24,9 @@ void ForwardChecking::StartKcolor(){
 	this->kproblem.initializeExample();
 	//this->kproblem.initialize(size,1);
 
+	this->printAllDomainsKColorGraph();
+	this->printAllConstraintsKColorGraph();
+
 	if(size<10)
 	{
 		this->printAllDomainsKColorGraph();
@@ -87,6 +90,7 @@ bool ForwardChecking::labelKColorNode(int n)
 		else
 		{
 
+			//assign next color available
 			this->kproblem.CurrentColorGraph[n]->AsignedColor = this->kproblem.CurrentColorGraph[n]->temporalColorDomain[0];
 			this->kproblem.CurrentColorGraph[n]->temporalColorDomain.pop_front();
 
@@ -98,9 +102,11 @@ bool ForwardChecking::labelKColorNode(int n)
 			//Check if the current assign is feasible
 			if(this->kproblem.pastConsistent(n))
 			{
-				//
-
-				return true;
+				//this->kproblem.CurrentColorGraph.size() != n-1: last node reached.
+				//the if have Short-circuit evaluation so if the current node is the last one, it's not needed
+				//to call the method checkForward.
+				if(this->kproblem.CurrentColorGraph.size() == n+1 || this->kproblem.checkForward(n))
+					return true;
 			}
 		}
 	}

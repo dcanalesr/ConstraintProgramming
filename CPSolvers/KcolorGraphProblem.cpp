@@ -4,6 +4,7 @@ using namespace std;
 #include <stdlib.h>
 #include <string>
 
+string ptab = "....";
 
 /*
  * Initialize the whole instance of the problem
@@ -80,6 +81,11 @@ void KcolorGraphProblem::initialize(int size, int orderingHeuristicOption){
 
 void KcolorGraphProblem::initializeExample()
 {
+	/*
+	 * This example was used in the paper of "Minimal Forward Checking" in https://www.researchgate.net/publication/3562041_Minimal_forward_checking
+	 */
+
+
 	KcolorGraphNode* node1 = new KcolorGraphNode(1);
 	KcolorGraphNode* node2 = new KcolorGraphNode(2);
 	KcolorGraphNode* node3 = new KcolorGraphNode(3);
@@ -216,14 +222,14 @@ bool KcolorGraphProblem::pastConsistent(int n)
  */
 bool KcolorGraphProblem::checkForward(int i)
 {
-	cout << "filtering future domains from node: " << i << endl;
+	cout << "filtering future domains from node: " << i+1 << endl;
 
 
 	//for each node from node i+1, filter the domains of the future nodes.
 	for(int j=i+1;j<this->CurrentColorGraph.size();j++)
 	{
 
-		cout << "filtering domain of the node: " << j << "(id:"<<this->CurrentColorGraph[j]->ID<<")"<< endl;
+		cout << ptab<< "filtering domain of the node: " << j+1 << "(id:"<<this->CurrentColorGraph[j]->ID<<")"<< endl;
 
 		//for each color in the domain of that node look his temporalDomain
 		for(int k=0;k<this->CurrentColorGraph[j]->temporalColorDomain.size();k++)
@@ -231,15 +237,15 @@ bool KcolorGraphProblem::checkForward(int i)
 			//if the current assigned color == color of the domain.
 			if(this->CurrentColorGraph[i]->AsignedColor == this->CurrentColorGraph[j]->temporalColorDomain[k])
 			{
-				cout << "Deleting value: " << this->CurrentColorGraph[j]->temporalColorDomain[k] << " of the node: "<< j << "(id:"<<this->CurrentColorGraph[j]->ID<<")"<< endl;
 
+				cout << ptab << ptab<< "Deleting value: " << this->CurrentColorGraph[j]->temporalColorDomain[k] << " of the node: "<< j+1 << "(id:"<<this->CurrentColorGraph[j]->ID<<")"<< endl;
 				this->CurrentColorGraph[j]->temporalColorDomain.erase(this->CurrentColorGraph[j]->temporalColorDomain.begin()+k);
 
 				//If there is a node in the constraints that reach 0 colors in his domains, the future node j
 				//will reach a dead end.
-				if(this->CurrentColorGraph[i]->constraints[j]->temporalColorDomain.size()==0)
+				if(this->CurrentColorGraph[j]->temporalColorDomain.size()==0)
 				{
-					cout << "Domain of the node: "<< j << "(id:"<<this->CurrentColorGraph[j]->ID<<") empty, restoring domains from nodes" << i << " to " << j << endl;
+					cout << ptab<< ptab<< ptab<< "Domain of the node: "<< j+1 << "(id:"<<this->CurrentColorGraph[j]->ID<<") empty, restoring domains from nodes " << i+1 << " to " << j+1 << "(inclusively)"<< endl;
 
 					//Restore all domains filtered from node i+1 to j(inclusive)
 					for(int n=i+1;n<=j;n++)

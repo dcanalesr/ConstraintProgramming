@@ -10,5 +10,9 @@ int main(int argc,char* argv[])
 
 	//BackTrack backTrack;
 	//backTrack.StartKcolor();
+
+	ForwardChecking forwardChecking;
+	forwardChecking.StartKcolor();
+
 	return 0;
 }
