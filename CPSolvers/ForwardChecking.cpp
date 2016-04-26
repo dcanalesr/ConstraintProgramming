@@ -1,7 +1,7 @@
 /*
- * kColorBackTrack.cpp
+ * ForwardChecking.cpp
  *
- *  Created on: 20/10/2015
+ *  Created on: 26/04/2016
  *      Author: dario
  */
 #include "headers.h"
@@ -11,11 +11,11 @@ using namespace std;
 
 
 /*
- * Initialize the BackTrack algorithm: Generate a new problem and try to solve it.
+ * Initialize the Forward Checking algorithm: Generate a new problem and try to solve it.
  */
-void BackTrack::StartKcolor(){
+void ForwardChecking::StartKcolor(){
 
-	cout << "\t\t\t\t Starting Backtrack for K-coloring graph" << endl;
+	cout << "\t\t\t\t Starting Forward Checking for K-coloring graph" << endl;
 
 	KcolorGraphProblem problem;
 
@@ -67,12 +67,11 @@ void BackTrack::StartKcolor(){
 
 
 
-
 /*
  * Try to instantiate the node n in the graph, if any color of the domain couldn't be used
  * return false. Return true when found a success instantiation.
  */
-bool BackTrack::labelKColorNode(int n)
+bool ForwardChecking::labelKColorNode(int n)
 {
 	//go over each color of the graph "poping" each color.
 	while(true)
@@ -98,7 +97,11 @@ bool BackTrack::labelKColorNode(int n)
 
 			//Check if the current assign is feasible
 			if(this->kproblem.pastConsistent(n))
+			{
+				//
+
 				return true;
+			}
 		}
 	}
 	return false; //return false in the default case.
@@ -106,7 +109,7 @@ bool BackTrack::labelKColorNode(int n)
 /*
  * Print in the screen domains of all nodes in the graph.
  */
-void BackTrack::printAllDomainsKColorGraph()
+void ForwardChecking::printAllDomainsKColorGraph()
 {
 	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
 	{
@@ -118,7 +121,7 @@ void BackTrack::printAllDomainsKColorGraph()
 /*
  * Print in the screen constraints of all nodes in the graph.
  */
-void BackTrack::printAllConstraintsKColorGraph()
+void ForwardChecking::printAllConstraintsKColorGraph()
 {
 	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
 	{
@@ -126,3 +129,4 @@ void BackTrack::printAllConstraintsKColorGraph()
 	}
 	cout << "------------------------------------------------"<<endl;
 }
+

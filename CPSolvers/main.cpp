@@ -5,10 +5,10 @@ using namespace std;
 #include <stdlib.h>
 int main(int argc,char* argv[])
 {
-	//srand(1);
+	srand(1);
 	srand(time(NULL));
 
-	BackTrack backTrack;
-	backTrack.StartKcolor();
+	//BackTrack backTrack;
+	//backTrack.StartKcolor();
 	return 0;
 }

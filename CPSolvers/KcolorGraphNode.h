@@ -9,7 +9,7 @@
 class KcolorGraphNode{
 public:
 	int ID;
-	std::string Color;
+	std::string AsignedColor;
 	std::deque<std::string> originalColorDomain;
 	std::deque<std::string> temporalColorDomain;
 	std::deque<KcolorGraphNode *> constraints;
@@ -23,4 +23,5 @@ public:
 	void printConstraints();
 	/* restore the node's domain */
 	void restoreDomain();
+
 };

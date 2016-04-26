@@ -1,6 +1,6 @@
 #include "headers.h"
 using namespace std;
-#include<iostream>
+#include <iostream>
 #include <stdlib.h>
 #include <string>
 
@@ -160,17 +160,17 @@ void KcolorGraphProblem::checkSetBestSolution() {
 	deque<string> distinctColors;
 	bool distinctColor=true;
 	for(int i=0;i<this->CurrentColorGraph.size();i++){
-		if(this->CurrentColorGraph[i]->Color != this->CurrentColorGraph[i]->defaultColor)
+		if(this->CurrentColorGraph[i]->AsignedColor != this->CurrentColorGraph[i]->defaultColor)
 		{
 			distinctColor = true;
 			for(int j=0;j<distinctColors.size();j++)
 			{
-				if(this->CurrentColorGraph[i]->Color == distinctColors[j])
+				if(this->CurrentColorGraph[i]->AsignedColor == distinctColors[j])
 					distinctColor = false;
 			}
 
 			if(distinctColor)
-				distinctColors.push_back(this->CurrentColorGraph[i]->Color);
+				distinctColors.push_back(this->CurrentColorGraph[i]->AsignedColor);
 
 		}
 	}
@@ -187,7 +187,7 @@ void KcolorGraphProblem::checkSetBestSolution() {
 		for(int i=0;i<this->CurrentColorGraph.size();i++)
 		{
 			KcolorGraphNode *nodo1 = new KcolorGraphNode(this->CurrentColorGraph[i]->ID);
-			nodo1->Color = this->CurrentColorGraph[i]->Color;
+			nodo1->AsignedColor = this->CurrentColorGraph[i]->AsignedColor;
 			this->BestColorGraph.push_back(nodo1);
 		}
 
@@ -196,7 +196,7 @@ void KcolorGraphProblem::checkSetBestSolution() {
 		cout << "Number of colors: " << distinctColors.size()<< endl;
 		cout << "Configuration: " <<endl;
 		for(int i=0;i<this->CurrentColorGraph.size();i++){
-			cout <<"Node: " << this->CurrentColorGraph[i]->ID << " Color: "<< this->CurrentColorGraph[i]->Color<<endl;
+			cout <<"Node: " << this->CurrentColorGraph[i]->ID << " Color: "<< this->CurrentColorGraph[i]->AsignedColor<<endl;
 		}
 	}
 }
@@ -209,6 +209,51 @@ bool KcolorGraphProblem::pastConsistent(int n)
 	//Check if the graph is past consistent until the node n is equal to to check
 	//the node n.
 	return this->CurrentColorGraph[n]->checkConstraintsBreak();
+}
+
+/*
+ * Filters the domain future variable of the node i, based on the current color of that node.
+ */
+bool KcolorGraphProblem::checkForward(int i)
+{
+	cout << "filtering future domains from node: " << i << endl;
+
+
+	//for each node from node i+1, filter the domains of the future nodes.
+	for(int j=i+1;j<this->CurrentColorGraph.size();j++)
+	{
+
+		cout << "filtering domain of the node: " << j << "(id:"<<this->CurrentColorGraph[j]->ID<<")"<< endl;
+
+		//for each color in the domain of that node look his temporalDomain
+		for(int k=0;k<this->CurrentColorGraph[j]->temporalColorDomain.size();k++)
+		{
+			//if the current assigned color == color of the domain.
+			if(this->CurrentColorGraph[i]->AsignedColor == this->CurrentColorGraph[j]->temporalColorDomain[k])
+			{
+				cout << "Deleting value: " << this->CurrentColorGraph[j]->temporalColorDomain[k] << " of the node: "<< j << "(id:"<<this->CurrentColorGraph[j]->ID<<")"<< endl;
+
+				this->CurrentColorGraph[j]->temporalColorDomain.erase(this->CurrentColorGraph[j]->temporalColorDomain.begin()+k);
+
+				//If there is a node in the constraints that reach 0 colors in his domains, the future node j
+				//will reach a dead end.
+				if(this->CurrentColorGraph[i]->constraints[j]->temporalColorDomain.size()==0)
+				{
+					cout << "Domain of the node: "<< j << "(id:"<<this->CurrentColorGraph[j]->ID<<") empty, restoring domains from nodes" << i << " to " << j << endl;
+
+					//Restore all domains filtered from node i+1 to j(inclusive)
+					for(int n=i+1;n<=j;n++)
+					{
+						this->CurrentColorGraph[n]->restoreDomain();
+					}
+
+					return false;
+				}
+			}
+		}
+	}
+	//return true only if all domains of the future variables could be filtered successfully
+	return true;
 }
 
 
@@ -225,9 +270,11 @@ void KcolorGraphProblem::printFinalResults() {
 		cout << "-----------The objective function value is:  " << this->BestOFValue << " (distinct colors)" <<endl;
 		cout << "Printing the Graph " <<endl;
 		for(int i=0;i<this->BestColorGraph.size();i++){
-			cout << "----------------- Node: " << this->BestColorGraph[i]->ID << " - Color " <<this->BestColorGraph[i]->Color<<endl;
+			cout << "----------------- Node: " << this->BestColorGraph[i]->ID << " - Color " <<this->BestColorGraph[i]->AsignedColor<<endl;
 		}
 	}
 	else
 		cout << "The graph doesn't have a solution"<<endl;
 }
+
+

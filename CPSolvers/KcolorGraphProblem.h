@@ -14,6 +14,8 @@ public:
 		void checkSetBestSolution();
 		void restoreDomainsFromK(int k);
 		bool pastConsistent(int n);
+		/* Filters the domain of all connected nodes with current node */
+		bool checkForward(int i);
 		void printFinalResults();
 };
 

@@ -6,7 +6,7 @@
  */
 #include "headers.h"
 using namespace std;
-#include<iostream>
+#include <iostream>
 const string pTab="..";
 
 /*
@@ -15,12 +15,12 @@ const string pTab="..";
 KcolorGraphNode::KcolorGraphNode(int id){
 	this->ID = id;
 	this->defaultColor="[Uninstantiated]";
-	this->Color = this->defaultColor;
+	this->AsignedColor = this->defaultColor;
 }
 KcolorGraphNode::KcolorGraphNode(){
 	this->ID = 0;
 	this->defaultColor="[Uninstantiated]";
-	this->Color = this->defaultColor;
+	this->AsignedColor = this->defaultColor;
 }
 
 /*
@@ -34,8 +34,8 @@ deque<KcolorGraphNode *> KcolorGraphNode::checkConstraints(){
 	cout << "Node: " << this->ID<< " -- "<<endl;
 	for(int i=0;i<this->constraints.size();i++)
 	{
-		cout << pTab <<"Constraint with node "<<this->constraints[i]->ID<< ": " <<this->constraints[i]->Color <<endl;
-		if(this->Color == this->constraints[i]->Color)
+		cout << pTab <<"Constraint with node "<<this->constraints[i]->ID<< ": " <<this->constraints[i]->AsignedColor <<endl;
+		if(this->AsignedColor == this->constraints[i]->AsignedColor)
 			conflictNodes.push_back(this->constraints[i]);
 	}
 	return conflictNodes;
@@ -51,12 +51,12 @@ void KcolorGraphNode::checkConstraintsPrint()
 
 	if(restriccionesIncumplidas.size()>0){
 
-		cout << "------->Node: " << this->ID << " - color: "<< this->Color <<" -- " << restriccionesIncumplidas.size() << " Conflict restrictions: "<< endl;
+		cout << "------->Node: " << this->ID << " - color: "<< this->AsignedColor <<" -- " << restriccionesIncumplidas.size() << " Conflict restrictions: "<< endl;
 
 		for(int i=0;i<restriccionesIncumplidas.size();i++)
 		{
 			cout << "------------>Node: "<< restriccionesIncumplidas[i]->ID ;
-			cout<< " Color: " << restriccionesIncumplidas[i]->Color <<endl;
+			cout<< " Color: " << restriccionesIncumplidas[i]->AsignedColor <<endl;
 		}
 	}
 	cout << "------------------------------------------------"<<endl;
@@ -69,7 +69,7 @@ bool KcolorGraphNode::checkConstraintsBreak() {
 	//for each node in the list of constraint, if one is violated return false.
 	for(int i=0;i<constraints.size();i++)
 	{
-		if(this->Color == this->constraints[i]->Color)
+		if(this->AsignedColor == this->constraints[i]->AsignedColor)
 		{
 			return false;
 		}
@@ -112,3 +112,4 @@ void KcolorGraphNode::printConstraints()
 		cout << pTab << "Arc constraint with node: "<< this->constraints[i]->ID << endl;
 	}
 }
+
