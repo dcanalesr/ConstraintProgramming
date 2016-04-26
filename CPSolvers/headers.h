@@ -11,6 +11,7 @@
 #include "KcolorGraphNode.h"
 #include "KcolorGraphProblem.h"
 #include "BackTrack.h"
+#include "ForwardChecking.h"
 
 
 
