@@ -6,6 +6,15 @@ using namespace std;
 
 string ptab = "....";
 
+//TODO: Implement destruction of dynamic pointers to nodes generated with new.
+
+
+KcolorGraphProblem::KcolorGraphProblem()
+{
+	this->BestOFValue = 50000000;
+
+}
+
 /*
  * Initialize the whole instance of the problem
  */
@@ -281,6 +290,21 @@ void KcolorGraphProblem::printFinalResults() {
 	}
 	else
 		cout << "The graph doesn't have a solution"<<endl;
+}
+
+/*
+ * Assuming a node "causeNode" is applying a filter on "filteredNode".
+ * Add the deletion of the value "value" in the temporal domain of the node "filteredNode" to the history with
+ * a key to the node "causeNode"
+ */
+void KcolorGraphProblem::addDomainDeletionToHistory(KcolorGraphNode causeNode, KcolorGraphNode filteredNode, std::string value)
+{
+	KcolorGraphDomainDeletion deletion;
+	history.insert ( std::pair<char,int>(causeNode.ID,100) );
+}
+
+void KcolorGraphProblem::restoreAllDeletionsFromHistory(
+		KcolorGraphNode causeNode) {
 }
 
 

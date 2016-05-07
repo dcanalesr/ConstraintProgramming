@@ -113,3 +113,8 @@ void KcolorGraphNode::printConstraints()
 	}
 }
 
+void KcolorGraphNode::restoreValueDomain(std::string value)
+{
+	cout << pTab <<"Restoring value: "<<value << " in the domain of node "<<this->ID <<endl;
+	this->temporalColorDomain.push_back(value);
+}
