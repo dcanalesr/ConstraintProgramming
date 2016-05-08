@@ -334,4 +334,26 @@ void KcolorGraphProblem::restoreAllDeletionsFromHistory( KcolorGraphNode *causeN
 
 }
 
+void KcolorGraphProblem::saveBackupTemporalDomain(KcolorGraphNode *nodeBackup)
+{
+	//reset temporal domain
+	this->backupTemporalDomain.clear();
 
+	//Save temporal domain of current node, just in case of backtrack needed.
+	for(int c=0; c<nodeBackup->temporalColorDomain.size();c++)
+	{
+		backupTemporalDomain.push_back(nodeBackup->temporalColorDomain[c]);
+	}
+}
+
+void KcolorGraphProblem::restoreBakupTemporalDomain(KcolorGraphNode *nodeBackup)
+{
+	cout << ptab<< "Restoring backupTemporalDomain of node: "<<nodeBackup->ID<<endl;
+	for(int c=0; c<backupTemporalDomain.size();c++)
+	{
+		nodeBackup->temporalColorDomain.push_front(backupTemporalDomain[c]);
+	}
+
+	//reset temporal domain after the restore
+	this->backupTemporalDomain.clear();
+}

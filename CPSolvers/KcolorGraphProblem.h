@@ -28,8 +28,10 @@ public:
 		void printFinalResults();
 		void restoreAllDeletionsFromHistory(KcolorGraphNode *causeNode);
 		void addDomainDeletionToHistory(KcolorGraphNode * causeNode, KcolorGraphNode *filteredNode, std::string value);
+		void saveBackupTemporalDomain(KcolorGraphNode *nodeBackup);
+		void restoreBakupTemporalDomain(KcolorGraphNode *nodeBackup);
 private:
-
+		std::deque<std::string> backupTemporalDomain;
 		std::multimap<int,KcolorGraphDomainDeletion> history;
 		std::pair <std::multimap<int,KcolorGraphDomainDeletion>::iterator, std::multimap<int,KcolorGraphDomainDeletion>::iterator> searchResult;
 };
