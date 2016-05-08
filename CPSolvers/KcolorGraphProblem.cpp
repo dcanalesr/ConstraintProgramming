@@ -233,6 +233,7 @@ bool KcolorGraphProblem::checkForward(int i)
 {
 	cout << "filtering future domains from node: " << i+1 << endl;
 
+	string deletedValue = "";
 
 	//for each node from node i+1, filter the domains of the future nodes.
 	for(int j=i+1;j<this->CurrentColorGraph.size();j++)
@@ -248,6 +249,10 @@ bool KcolorGraphProblem::checkForward(int i)
 			{
 
 				cout << ptab << ptab<< "Deleting value: " << this->CurrentColorGraph[j]->temporalColorDomain[k] << " of the node: "<< j+1 << "(id:"<<this->CurrentColorGraph[j]->ID<<")"<< endl;
+
+				//Add the deleted value to history
+				this->addDomainDeletionToHistory(this->CurrentColorGraph[i],this->CurrentColorGraph[j],this->CurrentColorGraph[j]->temporalColorDomain[k]);
+
 				this->CurrentColorGraph[j]->temporalColorDomain.erase(this->CurrentColorGraph[j]->temporalColorDomain.begin()+k);
 
 				//If there is a node in the constraints that reach 0 colors in his domains, the future node j
@@ -259,11 +264,14 @@ bool KcolorGraphProblem::checkForward(int i)
 					//Restore all domains filtered from node i+1 to j(inclusive)
 					for(int n=i+1;n<=j;n++)
 					{
-						this->CurrentColorGraph[n]->restoreDomain();
+						this->restoreAllDeletionsFromHistory(this->CurrentColorGraph[i]);
 					}
 
 					return false;
 				}
+
+
+
 			}
 		}
 	}
@@ -297,14 +305,33 @@ void KcolorGraphProblem::printFinalResults() {
  * Add the deletion of the value "value" in the temporal domain of the node "filteredNode" to the history with
  * a key to the node "causeNode"
  */
-void KcolorGraphProblem::addDomainDeletionToHistory(KcolorGraphNode causeNode, KcolorGraphNode filteredNode, std::string value)
+void KcolorGraphProblem::addDomainDeletionToHistory(KcolorGraphNode * causeNode, KcolorGraphNode *filteredNode, std::string value)
 {
-	KcolorGraphDomainDeletion deletion;
-	history.insert ( std::pair<char,int>(causeNode.ID,100) );
+
+	cout << ptab << ptab << "Adding - \"node: " << causeNode->ID << " deleted: "<< value << " in node: " <<filteredNode->ID << "\" - to the history " << endl;
+	KcolorGraphDomainDeletion deletion(value,filteredNode);
+	history.insert(std::pair<char,KcolorGraphDomainDeletion>(causeNode->ID,deletion));
 }
 
-void KcolorGraphProblem::restoreAllDeletionsFromHistory(
-		KcolorGraphNode causeNode) {
+/*
+ * Restore the deleted values made from node "causeNode" in all subsequent variables.
+ */
+
+void KcolorGraphProblem::restoreAllDeletionsFromHistory( KcolorGraphNode *causeNode)
+{
+
+	cout << ptab << ptab << "Restoring all deleted values made from node: " << causeNode->ID << " found in the history."<<endl;
+	this->searchResult = this->history.equal_range(causeNode->ID);
+
+	for (std::multimap<int,KcolorGraphDomainDeletion>::iterator it=this->searchResult.first; it!=this->searchResult.second; ++it)
+	{
+	      cout<<ptab << ptab << "Restoring the deletion: '" << causeNode->ID << " deleted value " << it->second.value << " on node: "<< it->second.node->ID<<endl;
+	      it->second.node->temporalColorDomain.push_back(it->second.value);
+	}
+	this->history.erase(causeNode->ID);
+
+
+
 }
 
 

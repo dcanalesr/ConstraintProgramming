@@ -12,8 +12,5 @@
 #include "KcolorGraphProblem.h"
 #include "BackTrack.h"
 #include "ForwardChecking.h"
-#include "KcolorGraphDomainDeletion.h"
-
-
 
 #endif /* HEADERS_H_ */

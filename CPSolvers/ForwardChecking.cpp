@@ -15,6 +15,8 @@ using namespace std;
  */
 void ForwardChecking::StartKcolor(){
 
+	deque<string> copyTemporalDomain;
+
 	cout << "\t\t\t\t Starting Forward Checking for K-coloring graph" << endl;
 
 	KcolorGraphProblem problem;
@@ -37,25 +39,44 @@ void ForwardChecking::StartKcolor(){
 	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
 	{
 
+
+		//Save temporal domain of current node, just in case of backtrack needed.
+		for(int c=0; c<this->kproblem.CurrentColorGraph[i]->temporalColorDomain.size();c++)
+		{
+			copyTemporalDomain.push_back(this->kproblem.CurrentColorGraph[i]->temporalColorDomain[c]);
+		}
+
+
+
 		//even the first variable couldn't be instantiated without conflicts.
 		if(i<0)
 		{
 			cout << "First node couldn't be instantiated." << endl;
 			break;
 		}
-
-
 		//Trying to label variable i.
 		else if(!labelKColorNode(i))
 		{
 			//couldn't instantiate the current variable:
 			if(i-1>0)
-				//Restore domain of variables from i to the last.
-				this->kproblem.restoreDomainsFromK(i);
+			{
+				//Restore domain of variables filtered by node i-1.
+				this->kproblem.restoreAllDeletionsFromHistory(this->kproblem.CurrentColorGraph[i-1]);
+
+				//Restore all elements of the domain of node i that the node i consumed trying to label.
+				for(int c=0; c<copyTemporalDomain.size();c++)
+					this->kproblem.CurrentColorGraph[i]->temporalColorDomain.push_front(copyTemporalDomain[c]);
+
+				//Clear temporal domain copy
+				copyTemporalDomain.clear();
+			}
 
 			//return to the i-1 variable (-2 because the "for" will add 1 on the next loop).
 			i-=2;
 		}
+		//Clear temporal domain copy
+		copyTemporalDomain.clear();
+
 		//check if the graph finished instantiating all nodes.
 		if(i==this->kproblem.CurrentColorGraph.size()-1)
 		{
