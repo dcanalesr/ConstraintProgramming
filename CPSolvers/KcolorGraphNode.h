@@ -9,10 +9,11 @@ class KcolorGraphNode{
 public:
 	int ID;
 	std::string AsignedColor;
+	std::string defaultColor;
 	std::deque<std::string> originalColorDomain;
 	std::deque<std::string> temporalColorDomain;
 	std::deque<KcolorGraphNode *> constraints;
-	std::string defaultColor;
+
 	KcolorGraphNode(int id);
 	KcolorGraphNode();
 	std::deque<KcolorGraphNode *> checkConstraints();

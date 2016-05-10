@@ -8,9 +8,12 @@
 #ifndef HEADERS_H_
 #define HEADERS_H_
 
+#include "Problem.h"
+#include "ForwardChecking.h"
 #include "KcolorGraphNode.h"
 #include "KcolorGraphProblem.h"
 #include "BackTrack.h"
-#include "ForwardChecking.h"
+
+
 
 #endif /* HEADERS_H_ */

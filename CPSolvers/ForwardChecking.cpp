@@ -13,32 +13,29 @@ using namespace std;
 /*
  * Initialize the Forward Checking algorithm: Generate a new problem and try to solve it.
  */
-void ForwardChecking::StartKcolor(){
+void ForwardChecking::Start(){
 
 	cout << "\t\t\t\t Starting Forward Checking for K-coloring graph" << endl;
 
-	KcolorGraphProblem problem;
 
-	this->kproblem = problem;
-	int size = 15;
-	this->kproblem.initializeExample();
-	//this->kproblem.initialize(size,1);
 
-	this->printAllDomainsKColorGraph();
-	this->printAllConstraintsKColorGraph();
+	this->problem = new KcolorGraphProblem();
+	this->problemSize = 4;
 
-	if(size<10)
+	if(this->problemSize==4)
+		this->problem->initializeExample();
+	else
+		this->problem->initialize(this->problemSize,1);
+
+	if(this->problemSize<10)
 	{
-		this->printAllDomainsKColorGraph();
-		this->printAllConstraintsKColorGraph();
+		this->problem->printAllDomains();
+		this->problem->printAllConstraints();
 	}
 
 	//for each node in the color graph.
-	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
+	for(int i=0;i<this->problemSize;i++)
 	{
-
-		//saving backup of temporal domain of current node, in case of backtrack needed.
-		this->kproblem.saveBackupTemporalDomain(this->kproblem.CurrentColorGraph[i]);
 
 		//even the first variable couldn't be instantiated without conflicts.
 		if(i<0)
@@ -47,99 +44,61 @@ void ForwardChecking::StartKcolor(){
 			break;
 		}
 		//Trying to label variable i.
-		else if(!labelKColorNode(i))
+		else if(!label(i))
 		{
-			//couldn't instantiate the current variable:
 			if(i-1>0)
 			{
 				//Restore domain of variables filtered by node i-1.
-				this->kproblem.restoreAllDeletionsFromHistory(this->kproblem.CurrentColorGraph[i-1]);
-
-				//Backtrack is needed, restore the backup made.
-				this->kproblem.restoreBakupTemporalDomain(this->kproblem.CurrentColorGraph[i]);
-
+				this->problem->restoreCheckForwardDeletions(i-1);
 			}
 
 			//return to the i-1 variable (-2 because the "for" will add 1 on the next loop).
 			i-=2;
 		}
-		//check if the graph finished instantiating all nodes.
-		if(i==this->kproblem.CurrentColorGraph.size()-1)
+		//checks if the graph finished instantiating all nodes.
+		if(i==this->problemSize-1)
 		{
 
-			this->kproblem.checkSetBestSolution();
+			this->problem->checkSetBestSolution();
 			i--;
 			break; //REMOVE THIS IN ORDER TO GET A OPTIMIZATION PROBLEM.
 		}
 	}
-	this->kproblem.printFinalResults();
+	this->problem->printFinalResults();
 }
-
-
 
 /*
  * Try to instantiate the node n in the graph, if any color of the domain couldn't be used
  * return false. Return true when found a success instantiation.
  */
-bool ForwardChecking::labelKColorNode(int n)
+bool ForwardChecking::label(int n)
 {
+
+	//saving backup of temporal domain of current node, in case of backtrack needed.
+	this->problem->saveBackupTemporalDomain(n);
+
 	//go over each color of the graph "poping" each color.
 	while(true)
 	{
 		//if there are no more colors in the domain of the variable: dead end.
-		if(this->kproblem.CurrentColorGraph[n]->temporalColorDomain.size()==0)
-		{
 
-			//restore the color of the node to "unpainted".
-			this->kproblem.CurrentColorGraph[n]->AsignedColor = this->kproblem.CurrentColorGraph[n]->defaultColor;
-			return false;
-		}
+		if(!this->problem->assignNextValue(n))
+			break;
 		else
 		{
-
-			//assign next color available
-			this->kproblem.CurrentColorGraph[n]->AsignedColor = this->kproblem.CurrentColorGraph[n]->temporalColorDomain[0];
-			this->kproblem.CurrentColorGraph[n]->temporalColorDomain.pop_front();
-
-
-			cout << "Instantiating the node: " << this->kproblem.CurrentColorGraph[n]->ID << " - color: " << this->kproblem.CurrentColorGraph[n]->AsignedColor <<endl;
-
 			//this->kproblem.CurrentColorGraph[n]->checkConstraintsPrint();
-
 			//Check if the current assign is feasible
-			if(this->kproblem.pastConsistent(n))
+			if(this->problem->pastConsistent(n))
 			{
-				//this->kproblem.CurrentColorGraph.size() != n-1: last node reached.
+				//this->kproblem.CurrentColorGraph.size() == n+1: last node reached.
 				//the if have Short-circuit evaluation so if the current node is the last one, it's not needed
 				//to call the method checkForward.
-				if(this->kproblem.CurrentColorGraph.size() == n+1 || this->kproblem.checkForward(n))
+				if(problemSize== n+1 || this->problem->checkForward(n))
 					return true;
 			}
 		}
 	}
+	//Backtrack is needed, restore the backup made.
+	this->problem->restoreBakupTemporalDomain(n);
 	return false; //return false in the default case.
 }
-/*
- * Print in the screen domains of all nodes in the graph.
- */
-void ForwardChecking::printAllDomainsKColorGraph()
-{
-	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
-	{
-		this->kproblem.CurrentColorGraph[i]->printTemporalDomain();
-	}
-	cout << "------------------------------------------------"<<endl;
-}
-
-/*
- * Print in the screen constraints of all nodes in the graph.
- */
-void ForwardChecking::printAllConstraintsKColorGraph()
-{
-	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
-	{
-		this->kproblem.CurrentColorGraph[i]->printConstraints();
-	}
-	cout << "------------------------------------------------"<<endl;
-}
-

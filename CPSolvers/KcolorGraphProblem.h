@@ -1,5 +1,4 @@
 #include <deque>
-
 #include "headers.h"
 #include <string>
 #include <map>
@@ -11,25 +10,42 @@ public:
 	std::string value;
 	KcolorGraphNode *node;
 };
-class KcolorGraphProblem{
+class KcolorGraphProblem: public Problem
+{
 public:
-		std::deque<KcolorGraphNode *> CurrentColorGraph;
-		std::deque<KcolorGraphNode *> BestColorGraph;
+		std::deque<KcolorGraphNode *> CurrentGraph;
+		std::deque<KcolorGraphNode *> BestGraph;
 		int BestOFValue;
 
 		KcolorGraphProblem();
-		void initialize(int size, int orderingHeuristicOption);
+
 		void initializeExample();
-		void checkSetBestSolution();
-		void restoreDomainsFromK(int k);
+		void initialize(int size, int orderingHeuristicOption);
+
+
+		void printAllDomains();
+		void printAllConstraints();
+
+		void saveBackupTemporalDomain(int backupNodeIndex);
+		bool assignNextValue(int nodeIndex);
 		bool pastConsistent(int n);
+		void checkSetBestSolution();
+		void printFinalResults();
+
+		/*Restoring domains*/
+		void restoreCompleteDomainsFromK(int k);
+		void restoreBakupTemporalDomain(int backupNodeIndex);
+		void restoreCheckForwardDeletions(int causeNodeIndex);
+
+		/*filters*/
 		/* Filters the domain of all connected nodes with current node */
 		bool checkForward(int i);
-		void printFinalResults();
-		void restoreAllDeletionsFromHistory(KcolorGraphNode *causeNode);
-		void addDomainDeletionToHistory(KcolorGraphNode * causeNode, KcolorGraphNode *filteredNode, std::string value);
-		void saveBackupTemporalDomain(KcolorGraphNode *nodeBackup);
-		void restoreBakupTemporalDomain(KcolorGraphNode *nodeBackup);
+
+	private:
+		/* maintain a history of deletions in temporal domains of any variable*/
+		void addDomainDeletionToHistory(int causeNodeIndex, int filteredNodeIndex, std::string value);
+		void restoreAllDeletionsFromHistory(int causeNodeIndex);
+
 private:
 		std::deque<std::string> backupTemporalDomain;
 		std::multimap<int,KcolorGraphDomainDeletion> history;

@@ -3,10 +3,9 @@
 
 class ForwardChecking{
 public:
-	KcolorGraphProblem kproblem;
-	void StartKcolor();
-	void printAllDomainsKColorGraph();
-	void printAllConstraintsKColorGraph();
+	Problem* problem;
+	int problemSize;
+	void Start();
 private:
-	bool labelKColorNode(int n); //trata de instanciar un nodo, si lo logra instanciar retorna true, sino false
+	bool label(int n); //trata de instanciar un nodo, si lo logra instanciar retorna true, sino false
 };

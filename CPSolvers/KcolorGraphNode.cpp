@@ -17,11 +17,13 @@ KcolorGraphNode::KcolorGraphNode(int id){
 	this->defaultColor="[Uninstantiated]";
 	this->AsignedColor = this->defaultColor;
 }
-KcolorGraphNode::KcolorGraphNode(){
+KcolorGraphNode::KcolorGraphNode()
+{
 	this->ID = 0;
 	this->defaultColor="[Uninstantiated]";
 	this->AsignedColor = this->defaultColor;
 }
+
 
 /*
  * Check all constraints of current node and return a deque of pointers to the conflict nodes.
@@ -118,3 +120,4 @@ void KcolorGraphNode::restoreValueDomain(std::string value)
 	cout << pTab <<"Restoring value: "<<value << " in the domain of node "<<this->ID <<endl;
 	this->temporalColorDomain.push_back(value);
 }
+

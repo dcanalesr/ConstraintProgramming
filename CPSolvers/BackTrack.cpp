@@ -31,7 +31,7 @@ void BackTrack::StartKcolor(){
 	}
 
 	//for each node in the color graph.
-	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
+	for(int i=0;i<this->kproblem.CurrentGraph.size();i++)
 	{
 
 		//even the first variable couldn't be instantiated without conflicts.
@@ -48,13 +48,13 @@ void BackTrack::StartKcolor(){
 			//couldn't instantiate the current variable:
 			if(i-1>0)
 				//Restore domain of variables from i to the last.
-				this->kproblem.restoreDomainsFromK(i);
+				this->kproblem.restoreCompleteDomainsFromK(i);
 
 			//return to the i-1 variable (-2 because the "for" will add 1 on the next loop).
 			i-=2;
 		}
 		//check if the graph finished instantiating all nodes.
-		if(i==this->kproblem.CurrentColorGraph.size()-1)
+		if(i==this->kproblem.CurrentGraph.size()-1)
 		{
 
 			this->kproblem.checkSetBestSolution();
@@ -78,21 +78,21 @@ bool BackTrack::labelKColorNode(int n)
 	while(true)
 	{
 		//if there are no more colors in the domain of the variable: dead end.
-		if(this->kproblem.CurrentColorGraph[n]->temporalColorDomain.size()==0)
+		if(this->kproblem.CurrentGraph[n]->temporalColorDomain.size()==0)
 		{
 
 			//restore the color of the node to "unpainted".
-			this->kproblem.CurrentColorGraph[n]->AsignedColor = this->kproblem.CurrentColorGraph[n]->defaultColor;
+			this->kproblem.CurrentGraph[n]->AsignedColor = this->kproblem.CurrentGraph[n]->defaultColor;
 			return false;
 		}
 		else
 		{
 
-			this->kproblem.CurrentColorGraph[n]->AsignedColor = this->kproblem.CurrentColorGraph[n]->temporalColorDomain[0];
-			this->kproblem.CurrentColorGraph[n]->temporalColorDomain.pop_front();
+			this->kproblem.CurrentGraph[n]->AsignedColor = this->kproblem.CurrentGraph[n]->temporalColorDomain[0];
+			this->kproblem.CurrentGraph[n]->temporalColorDomain.pop_front();
 
 
-			cout << "Instantiating the node: " << this->kproblem.CurrentColorGraph[n]->ID << " - color: " << this->kproblem.CurrentColorGraph[n]->AsignedColor <<endl;
+			cout << "Instantiating the node: " << this->kproblem.CurrentGraph[n]->ID << " - color: " << this->kproblem.CurrentGraph[n]->AsignedColor <<endl;
 
 			//this->kproblem.CurrentColorGraph[n]->checkConstraintsPrint();
 
@@ -108,9 +108,9 @@ bool BackTrack::labelKColorNode(int n)
  */
 void BackTrack::printAllDomainsKColorGraph()
 {
-	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
+	for(int i=0;i<this->kproblem.CurrentGraph.size();i++)
 	{
-		this->kproblem.CurrentColorGraph[i]->printTemporalDomain();
+		this->kproblem.CurrentGraph[i]->printTemporalDomain();
 	}
 	cout << "------------------------------------------------"<<endl;
 }
@@ -120,9 +120,9 @@ void BackTrack::printAllDomainsKColorGraph()
  */
 void BackTrack::printAllConstraintsKColorGraph()
 {
-	for(int i=0;i<this->kproblem.CurrentColorGraph.size();i++)
+	for(int i=0;i<this->kproblem.CurrentGraph.size();i++)
 	{
-		this->kproblem.CurrentColorGraph[i]->printConstraints();
+		this->kproblem.CurrentGraph[i]->printConstraints();
 	}
 	cout << "------------------------------------------------"<<endl;
 }
