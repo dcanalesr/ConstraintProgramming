@@ -11,6 +11,7 @@
 #include "Problem.h"
 #include "ForwardChecking.h"
 #include "KcolorGraphNode.h"
+#include "KcolorDomainDeletion.h"
 #include "KcolorGraphProblem.h"
 #include "BackTrack.h"
 

@@ -3,10 +3,11 @@
 
 class BackTrack{
 public:
-	KcolorGraphProblem kproblem;
-	void StartKcolor();
-	void printAllDomainsKColorGraph();
-	void printAllConstraintsKColorGraph();
+	BackTrack(int problemSize_,std::string problemType);
+	Problem* problem;
+	int problemSize;
+
+	void Start();
 private:
-	bool labelKColorNode(int n);
+	bool label(int n);
 };

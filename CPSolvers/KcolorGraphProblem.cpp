@@ -233,45 +233,46 @@ bool KcolorGraphProblem::pastConsistent(int n)
 /*
  * Filters the domain future variable of the node i, based on the current color of that node.
  */
-bool KcolorGraphProblem::checkForward(int i)
+bool KcolorGraphProblem::checkForward(int nodeIndex)
 {
-	cout << "filtering future domains from node: " << i+1 << endl;
-
-	string deletedValue = "";
+	cout << "filtering future connected domains from node: " << nodeIndex+1 << endl;
 
 	//for each node from node i+1, filter the domains of the future nodes.
-	for(int j=i+1;j<this->CurrentGraph.size();j++)
+	for(int j=0;j<this->CurrentGraph[nodeIndex]->constraints.size();j++)
 	{
 
-		cout << ptab<< "filtering domain of the node: " << j+1 << "(id:"<<this->CurrentGraph[j]->ID<<")"<< endl;
-
-		//for each color in the domain of that node look his temporalDomain
-		for(int k=0;k<this->CurrentGraph[j]->temporalColorDomain.size();k++)
+		//Check if the constraint is a future variable = check if the variable has unassigned value.
+		if(this->CurrentGraph[nodeIndex]->constraints[j]->AsignedColor == this->CurrentGraph[nodeIndex]->constraints[j]->defaultColor)
 		{
-			//if the current assigned color == color of the domain.
-			if(this->CurrentGraph[i]->AsignedColor == this->CurrentGraph[j]->temporalColorDomain[k])
+			cout << ptab<< "filtering domain of the node ID:"<<this->CurrentGraph[nodeIndex]->constraints[j]->ID<< endl;
+
+			//for each color in the domain of that node look his temporalDomain
+			for(int k=0;k<this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain.size();k++)
 			{
-
-				cout << ptab << ptab<< "Deleting value: " << this->CurrentGraph[j]->temporalColorDomain[k] << " of the node: "<< j+1 << "(id:"<<this->CurrentGraph[j]->ID<<")"<< endl;
-
-				//Add the deleted value to history
-				this->addDomainDeletionToHistory(i,j,this->CurrentGraph[j]->temporalColorDomain[k]);
-
-				this->CurrentGraph[j]->temporalColorDomain.erase(this->CurrentGraph[j]->temporalColorDomain.begin()+k);
-
-				//If there is a node in the constraints that reach 0 colors in his domains, the future node j
-				//will reach a dead end.
-				if(this->CurrentGraph[j]->temporalColorDomain.size()==0)
+				//if the current assigned color == color of the domain.
+				if(this->CurrentGraph[nodeIndex]->AsignedColor == this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain[k])
 				{
-					cout << ptab<< ptab<< ptab<< "Domain of the node: "<< j+1 << "(id:"<<this->CurrentGraph[j]->ID<<") empty, restoring domains from nodes " << i+1 << " to " << j+1 << "(inclusively)"<< endl;
 
-					//Restore all domains filtered from node i+1 to j(inclusive)
-					for(int n=i+1;n<=j;n++)
+
+
+					//cout << ptab << ptab<< "Deleting value: " << this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain[k] << " of the node: ID:"<<this->CurrentGraph[nodeIndex]->constraints[j]->ID<< endl;
+
+					//Add the deleted value to history
+					this->addDomainDeletionToHistory(this->CurrentGraph[nodeIndex],this->CurrentGraph[nodeIndex]->constraints[j],this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain[k]);
+
+					this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain.erase(this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain.begin()+k);
+
+					//If there is a node in the constraints that reach 0 colors in his domains, the future node j
+					//will reach a dead end.
+					if(this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain.size()==0)
 					{
-						this->restoreAllDeletionsFromHistory(i);
-					}
+						cout << ptab << ptab<< ptab<< "Domain of the node: ID:"<<this->CurrentGraph[nodeIndex]->constraints[j]->ID<<" empty "<< endl;
 
-					return false;
+
+						this->restoreAllDeletionsFromHistory(this->CurrentGraph[nodeIndex]);
+
+						return false;
+					}
 				}
 			}
 		}
@@ -307,10 +308,8 @@ void KcolorGraphProblem::printFinalResults()
  * Add the deletion of the value "value" in the temporal domain of the node "filteredNode" to the history with
  * a key to the node "causeNode"
  */
-void KcolorGraphProblem::addDomainDeletionToHistory(int causeNodeIndex, int filteredNodeIndex, std::string value)
+void KcolorGraphProblem::addDomainDeletionToHistory(KcolorGraphNode *causeNode, KcolorGraphNode *filteredNode, std::string value)
 {
-	KcolorGraphNode *causeNode = this->CurrentGraph[causeNodeIndex];
-	KcolorGraphNode *filteredNode = this->CurrentGraph[filteredNodeIndex];
 
 	cout << ptab << ptab << "Adding - \"node: " << causeNode->ID << " deleted: "<< value << " in node: " <<filteredNode->ID << "\" - to the history " << endl;
 	KcolorGraphDomainDeletion deletion(value,filteredNode);
@@ -320,10 +319,8 @@ void KcolorGraphProblem::addDomainDeletionToHistory(int causeNodeIndex, int filt
 /*
  * Restore the deleted values made from node in the position "causeNodeIndex" in all subsequent variables.
  */
-void KcolorGraphProblem::restoreAllDeletionsFromHistory(int causeNodeIndex)
+void KcolorGraphProblem::restoreAllDeletionsFromHistory(KcolorGraphNode *causeNode)
 {
-
-	KcolorGraphNode* causeNode = this->CurrentGraph[causeNodeIndex];
 
 	cout << ptab << ptab << "Restoring all deleted values made from node: " << causeNode->ID << " found in the history."<<endl;
 	this->searchResult = this->history.equal_range(causeNode->ID);
@@ -343,15 +340,8 @@ void KcolorGraphProblem::restoreAllDeletionsFromHistory(int causeNodeIndex)
 void KcolorGraphProblem::saveBackupTemporalDomain(int backupNodeIndex)
 {
 	KcolorGraphNode* nodeBackup = this->CurrentGraph[backupNodeIndex];
+	nodeBackup->saveBackupTemporalDomain();
 
-	//reset temporal domain
-	this->backupTemporalDomain.clear();
-
-	//Save temporal domain of current node, just in case of backtrack needed.
-	for(int c=0; c<nodeBackup->temporalColorDomain.size();c++)
-	{
-		backupTemporalDomain.push_back(nodeBackup->temporalColorDomain[c]);
-	}
 }
 
 /*
@@ -361,14 +351,7 @@ void KcolorGraphProblem::saveBackupTemporalDomain(int backupNodeIndex)
 void KcolorGraphProblem::restoreBakupTemporalDomain(int backupNodeIndex)
 {
 	KcolorGraphNode* nodeBackup = this->CurrentGraph[backupNodeIndex];
-	cout << ptab<< "Restoring backupTemporalDomain of node: "<<nodeBackup->ID<<endl;
-	for(int c=0; c<backupTemporalDomain.size();c++)
-	{
-		nodeBackup->temporalColorDomain.push_front(backupTemporalDomain[c]);
-	}
-
-	//reset temporal domain after the restore
-	this->backupTemporalDomain.clear();
+	nodeBackup->restoreBakupTemporalDomain();
 }
 
 /*
@@ -408,7 +391,7 @@ bool KcolorGraphProblem::assignNextValue(int nodeIndex)
 
 void KcolorGraphProblem::restoreCheckForwardDeletions(int causeNodeIndex)
 {
-	this->restoreAllDeletionsFromHistory(causeNodeIndex);
+	this->restoreAllDeletionsFromHistory(this->CurrentGraph[causeNodeIndex]);
 }
 
 
@@ -425,4 +408,7 @@ void KcolorGraphProblem::printAllConstraints()
 	cout << "------------------------------------------------"<<endl;
 }
 
-
+void KcolorGraphProblem::restoreDomain(int nodeIndex)
+{
+	this->CurrentGraph[nodeIndex]->restoreDomain();
+}

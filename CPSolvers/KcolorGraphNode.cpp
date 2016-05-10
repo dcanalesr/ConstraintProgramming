@@ -121,3 +121,34 @@ void KcolorGraphNode::restoreValueDomain(std::string value)
 	this->temporalColorDomain.push_back(value);
 }
 
+void KcolorGraphNode::saveBackupTemporalDomain()
+{
+	//only save the backup one time: if there is already a backup => the node is being revisited because of backtrack
+	//from another node.
+
+	if(this->backupTemporalDomain.size()==0){
+		//reset temporal domain
+
+		cout << pTab << "Saving backup of temporal domain of node: "<<this->ID<<endl;
+
+		//Save temporal domain of current node, just in case of backtrack needed.
+		for(int c=0; c<this->temporalColorDomain.size();c++)
+		{
+			backupTemporalDomain.push_back(this->temporalColorDomain[c]);
+			cout << pTab <<pTab<<pTab<<pTab << "value " << backupTemporalDomain[c] << " saved." <<  endl;
+		}
+	}
+}
+
+void KcolorGraphNode::restoreBakupTemporalDomain()
+{
+	cout << pTab << "Restoring backupTemporalDomain of node: "<<this->ID<<endl;
+	for(int c=0; c<backupTemporalDomain.size();c++)
+	{
+		this->temporalColorDomain.push_front(backupTemporalDomain[c]);
+		cout << pTab <<pTab<<pTab<<pTab << "value " << backupTemporalDomain[c] << " restored." <<  endl;
+	}
+
+	//reset temporal domain after the restore
+	this->backupTemporalDomain.clear();
+}

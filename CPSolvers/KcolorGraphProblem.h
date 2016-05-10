@@ -4,12 +4,6 @@
 #include <map>
 
 
-class KcolorGraphDomainDeletion{
-public:
-	KcolorGraphDomainDeletion(std::string value_,KcolorGraphNode *node_): value(value_),node(node_){}
-	std::string value;
-	KcolorGraphNode *node;
-};
 class KcolorGraphProblem: public Problem
 {
 public:
@@ -33,22 +27,22 @@ public:
 		void printFinalResults();
 
 		/*Restoring domains*/
+		virtual void restoreDomain(int nodeIndex);
 		void restoreCompleteDomainsFromK(int k);
 		void restoreBakupTemporalDomain(int backupNodeIndex);
 		void restoreCheckForwardDeletions(int causeNodeIndex);
 
 		/*filters*/
 		/* Filters the domain of all connected nodes with current node */
-		bool checkForward(int i);
-
-	private:
-		/* maintain a history of deletions in temporal domains of any variable*/
-		void addDomainDeletionToHistory(int causeNodeIndex, int filteredNodeIndex, std::string value);
-		void restoreAllDeletionsFromHistory(int causeNodeIndex);
+		bool checkForward(int nodeIndex);
 
 private:
-		std::deque<std::string> backupTemporalDomain;
+
 		std::multimap<int,KcolorGraphDomainDeletion> history;
 		std::pair <std::multimap<int,KcolorGraphDomainDeletion>::iterator, std::multimap<int,KcolorGraphDomainDeletion>::iterator> searchResult;
+
+		/* maintain a history of deletions in temporal domains of any variable*/
+		void addDomainDeletionToHistory(KcolorGraphNode *causeNode, KcolorGraphNode *filteredNode, std::string value);
+		void restoreAllDeletionsFromHistory(KcolorGraphNode *causeNode);
 };
 

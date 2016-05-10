@@ -21,8 +21,18 @@ public:
 	void checkConstraintsPrint();
 	void printTemporalDomain();
 	void printConstraints();
+
+	void saveBackupTemporalDomain();
+	void restoreBakupTemporalDomain();
+
 	/* restore the node's domain */
 	void restoreDomain();
+
+
+
 	/*Restore a single value in the domain of the current node*/
 	void restoreValueDomain(std::string value);
+
+private:
+	std::deque<std::string> backupTemporalDomain;
 };
