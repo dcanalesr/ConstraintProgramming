@@ -28,7 +28,7 @@ KcolorGraphNode::KcolorGraphNode()
 /*
  * Check all constraints of current node and return a deque of pointers to the conflict nodes.
  */
-deque<KcolorGraphNode *> KcolorGraphNode::checkConstraints(){
+deque<KcolorGraphNode *> KcolorGraphNode::checkPastConstraints(){
 
 	//for each node in the list of constraints, check the color
 	deque<KcolorGraphNode *> conflictNodes;
@@ -36,20 +36,23 @@ deque<KcolorGraphNode *> KcolorGraphNode::checkConstraints(){
 	cout << "Node: " << this->ID<< " -- "<<endl;
 	for(int i=0;i<this->constraints.size();i++)
 	{
-		cout << pTab <<"Constraint with node "<<this->constraints[i]->ID<< ": " <<this->constraints[i]->AsignedColor <<endl;
-		if(this->AsignedColor == this->constraints[i]->AsignedColor)
-			conflictNodes.push_back(this->constraints[i]);
+		if(this->constraints[i]->AsignedColor!= this->constraints[i]->defaultColor)
+		{
+			cout << pTab <<"Constraint with node "<<this->constraints[i]->ID<< ": " <<this->constraints[i]->AsignedColor <<endl;
+			if(this->AsignedColor == this->constraints[i]->AsignedColor)
+				conflictNodes.push_back(this->constraints[i]);
+		}
 	}
 	return conflictNodes;
 }
 
 /*
- * Check constraints of current node and print in the screen the conflict ones.
+ * Check constraints of current node with past variables and print in the screen the conflict ones.
  */
-void KcolorGraphNode::checkConstraintsPrint()
+void KcolorGraphNode::checkPastConstraintsPrint()
 {
 	cout << "------------ Checking all constraints ----------"<<endl;
-	deque<KcolorGraphNode *>restriccionesIncumplidas = this->checkConstraints();
+	deque<KcolorGraphNode *>restriccionesIncumplidas = this->checkPastConstraints();
 
 	if(restriccionesIncumplidas.size()>0){
 
@@ -65,13 +68,18 @@ void KcolorGraphNode::checkConstraintsPrint()
 }
 
 /*
- * Check constraints of current node, return false when the constraint violated if found.
+ * Check constraints of current node with past variables, return false when a constraint violated if found.
  */
-bool KcolorGraphNode::checkConstraintsBreak() {
+bool KcolorGraphNode::checkPastConstraintsBreak()
+{
 	//for each node in the list of constraint, if one is violated return false.
 	for(int i=0;i<constraints.size();i++)
 	{
-		if(this->AsignedColor == this->constraints[i]->AsignedColor)
+
+		//Short circuit evaluation
+		//this->constraints[i]->AsignedColor is currently assigned and
+		//is equal to the assigned color of the current node.
+		if(this->constraints[i]->AsignedColor!= this->constraints[i]->defaultColor && this->AsignedColor == this->constraints[i]->AsignedColor)
 		{
 			return false;
 		}

@@ -35,6 +35,7 @@ public:
 		/*filters*/
 		/* Filters the domain of all connected nodes with current node */
 		bool checkForward(int nodeIndex);
+		bool minimalCheckForward(int nodeIndex);
 
 private:
 
@@ -42,7 +43,7 @@ private:
 		std::pair <std::multimap<int,KcolorGraphDomainDeletion>::iterator, std::multimap<int,KcolorGraphDomainDeletion>::iterator> searchResult;
 
 		/* maintain a history of deletions in temporal domains of any variable*/
-		void addDomainDeletionToHistory(KcolorGraphNode *causeNode, KcolorGraphNode *filteredNode, std::string value);
+		void addDomainDeletionToHistory(KcolorGraphNode *causeNode, KcolorGraphNode *filteredNode, std::string &value);
 		void restoreAllDeletionsFromHistory(KcolorGraphNode *causeNode);
 };
 

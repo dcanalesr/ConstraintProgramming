@@ -16,9 +16,9 @@ public:
 
 	KcolorGraphNode(int id);
 	KcolorGraphNode();
-	std::deque<KcolorGraphNode *> checkConstraints();
-	bool checkConstraintsBreak();
-	void checkConstraintsPrint();
+	std::deque<KcolorGraphNode *> checkPastConstraints();
+	bool checkPastConstraintsBreak();
+	void checkPastConstraintsPrint();
 	void printTemporalDomain();
 	void printConstraints();
 

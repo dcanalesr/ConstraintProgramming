@@ -32,12 +32,16 @@ int main(int argc,char* argv[])
 			ForwardChecking forwardChecking(problemSize,problem);
 			forwardChecking.Start();
 		}
+		else if(algorithm == "mfc")
+		{
+			ForwardChecking forwardChecking(problemSize,problem);
+			forwardChecking.Start();
+		}
 		else
 			defaultErrorMessage(argc,argv);
 
 		return 0;
 	}
-	else defaultErrorMessage(argc,argv);
 }
 
 bool handleParams(int argc, char* argv[], int &seed,string &problem, int &problemSize, string &algorithm)
@@ -99,10 +103,11 @@ void defaultErrorMessage(int argc, char* argv[])
 	   << "-a algorithm "
 	   << endl
 	   << "Options for problem are: ColorGraph" <<endl
-	   << "Options for algorithm are: bt, fc" << endl
+	   << "Options for algorithm are: bt, fc, mfc" << endl
 	   << "Examples: " << endl
 	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -a fc" << endl
 	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -a bt" << endl
+	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -a mfc" << endl
 	   << endl << endl
 	   << "Current is:" << endl;
 

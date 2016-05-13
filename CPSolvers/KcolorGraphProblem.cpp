@@ -225,9 +225,8 @@ void KcolorGraphProblem::checkSetBestSolution()
  */
 bool KcolorGraphProblem::pastConsistent(int n)
 {
-	//Check if the graph is past consistent until the node n is equal to to check
-	//the node n.
-	return this->CurrentGraph[n]->checkConstraintsBreak();
+	//Check if the graph is past consistent until the node n is equal the node n.
+	return this->CurrentGraph[n]->checkPastConstraintsBreak();
 }
 
 /*
@@ -281,6 +280,57 @@ bool KcolorGraphProblem::checkForward(int nodeIndex)
 	return true;
 }
 
+bool KcolorGraphProblem::minimalCheckForward(int nodeIndex)
+{
+	cout << "Minimal filtering future connected domains from node: " << nodeIndex+1 << endl;
+
+	//for each node from node i+1, filter the domains of the future nodes.
+	for(int j=0;j<this->CurrentGraph[nodeIndex]->constraints.size();j++)
+	{
+
+		//Check if the constraint is a future variable = check if the variable has unassigned value.
+		if(this->CurrentGraph[nodeIndex]->constraints[j]->AsignedColor == this->CurrentGraph[nodeIndex]->constraints[j]->defaultColor)
+		{
+			cout << ptab<< "filtering domain of the node ID:"<<this->CurrentGraph[nodeIndex]->constraints[j]->ID<< endl;
+
+			//for each color in the domain of that node look his temporalDomain
+			for(int k=0;k<this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain.size();k++)
+			{
+				//if the current assigned color == color of the domain.
+				if(this->CurrentGraph[nodeIndex]->AsignedColor == this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain[k])
+				{
+
+					//cout << ptab << ptab<< "Deleting value: " << this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain[k] << " of the node: ID:"<<this->CurrentGraph[nodeIndex]->constraints[j]->ID<< endl;
+
+					//Add the deleted value to history
+					this->addDomainDeletionToHistory(this->CurrentGraph[nodeIndex],this->CurrentGraph[nodeIndex]->constraints[j],this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain[k]);
+
+					this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain.erase(this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain.begin()+k);
+
+					//If there is a node in the constraints that reach 0 colors in his domains, the future node j
+					//will reach a dead end.
+					if(this->CurrentGraph[nodeIndex]->constraints[j]->temporalColorDomain.size()==0)
+					{
+						cout << ptab << ptab<< ptab<< "Domain of the node: ID:"<<this->CurrentGraph[nodeIndex]->constraints[j]->ID<<" empty "<< endl;
+
+
+						this->restoreAllDeletionsFromHistory(this->CurrentGraph[nodeIndex]);
+
+
+						return false;
+					}
+					//If this line is reached, a success filter have been applied in this node constraint.
+					//Because this is minimal forward checking, the algorithm stop filtering for this node here.
+					break;
+				}
+			}
+		}
+	}
+	//return true only if all domains of the future variables could be filtered successfully
+	return true;
+
+}
+
 
 /*
  * Print in screen the results of searching a solution.
@@ -308,7 +358,7 @@ void KcolorGraphProblem::printFinalResults()
  * Add the deletion of the value "value" in the temporal domain of the node "filteredNode" to the history with
  * a key to the node "causeNode"
  */
-void KcolorGraphProblem::addDomainDeletionToHistory(KcolorGraphNode *causeNode, KcolorGraphNode *filteredNode, std::string value)
+void KcolorGraphProblem::addDomainDeletionToHistory(KcolorGraphNode *causeNode, KcolorGraphNode *filteredNode, std::string &value)
 {
 
 	cout << ptab << ptab << "Adding - \"node: " << causeNode->ID << " deleted: "<< value << " in node: " <<filteredNode->ID << "\" - to the history " << endl;
