@@ -8,34 +8,64 @@ using namespace std;
 
 
 
-bool handleParams(int argc, char* argv[], int &seed, string &problem, int &problemSize, string &algorithm);
+bool handleParams(int argc, char* argv[], int &seed, string &problem, int &problemSize, string &algorithm, string &instanceFilename);
 void defaultErrorMessage(int argc, char* argv[]);
 
 int main(int argc,char* argv[])
 {
 
 	int seed, problemSize;
-	string algorithm,problem;
+	string algorithm,problemType;
+	string instanceFilename ="";
 
-	bool resp = handleParams(argc,argv,seed, problem, problemSize, algorithm);
+	bool resp = handleParams(argc,argv,seed, problemType, problemSize, algorithm,instanceFilename);
 	if(resp)
 	{
 		srand(seed);
 		//srand(time(NULL));
 
-		if(algorithm == "bt"){
-			BackTrack backTrack(problemSize,problem);
-			backTrack.Start();
+		if(algorithm == "bt")
+		{
+			BackTrack * bt;
+
+			if(instanceFilename!="")
+			{
+				bt = new BackTrack(problemType,instanceFilename);
+			}
+			else
+			{
+				bt = new BackTrack(problemSize,problemType);
+			}
+
+			bt->Start();
 		}
 		else if(algorithm == "fc")
 		{
-			ForwardChecking forwardChecking(problemSize,problem);
-			forwardChecking.Start();
+			ForwardChecking * fc;
+
+			if(instanceFilename!="")
+			{
+				fc = new ForwardChecking(problemType,instanceFilename);
+			}
+			else
+			{
+				fc = new ForwardChecking(problemSize,problemType);
+			}
+			fc->Start();
 		}
 		else if(algorithm == "mfc")
 		{
-			ForwardChecking forwardChecking(problemSize,problem);
-			forwardChecking.Start();
+			MinimalForwardChecking * mfc;
+
+			if(instanceFilename!="")
+			{
+				//mfc = new MinimalForwardChecking(problemType,instanceFilename);
+			}
+			else
+			{
+				mfc = new MinimalForwardChecking(problemSize,problemType);
+			}
+			mfc->Start();
 		}
 		else
 			defaultErrorMessage(argc,argv);
@@ -44,7 +74,7 @@ int main(int argc,char* argv[])
 	}
 }
 
-bool handleParams(int argc, char* argv[], int &seed,string &problem, int &problemSize, string &algorithm)
+bool handleParams(int argc, char* argv[], int &seed,string &problem, int &problemSize, string &algorithm, string &instanceFilename)
 {
 
 	const int kExpectedArgc = 9;
@@ -76,6 +106,12 @@ bool handleParams(int argc, char* argv[], int &seed,string &problem, int &proble
 			   paramsCollected++;
 			   cout << "problem size collected!"<<endl;
 		   }
+		   else if(strcmp(argv[i], "-if")==0)
+		   {
+			   instanceFilename = argv[++i];
+			   paramsCollected++;
+			   cout << "instance file name collected!"<<endl;
+		   }
 		   else if(strcmp(argv[i], "-a")==0)
 		   {
 			   algorithm = argv[++i];
@@ -83,7 +119,7 @@ bool handleParams(int argc, char* argv[], int &seed,string &problem, int &proble
 			   cout << "algorithm collected!"<<endl;
 		   }
 		}
-		if(paramsCollected==4)
+		if(paramsCollected>=4)
 			return true;
 		else
 		{
@@ -91,6 +127,7 @@ bool handleParams(int argc, char* argv[], int &seed,string &problem, int &proble
 			defaultErrorMessage(argc,argv);
 		}
 	}
+	return true;
 
 }
 void defaultErrorMessage(int argc, char* argv[])
@@ -101,6 +138,7 @@ void defaultErrorMessage(int argc, char* argv[])
 	   << "-p problem "
 	   << "-ps problemSize "
 	   << "-a algorithm "
+	   << "-if instanceFileName (do not specify -ps option using this)"
 	   << endl
 	   << "Options for problem are: ColorGraph" <<endl
 	   << "Options for algorithm are: bt, fc, mfc" << endl
@@ -108,6 +146,7 @@ void defaultErrorMessage(int argc, char* argv[])
 	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -a fc" << endl
 	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -a bt" << endl
 	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -a mfc" << endl
+	   << "./CPSolvers -s 1 -p ColorGraph -if instances/dsjc125.1.col -a mfc" << endl
 	   << endl << endl
 	   << "Current is:" << endl;
 

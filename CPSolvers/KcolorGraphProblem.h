@@ -37,6 +37,12 @@ public:
 		bool checkForward(int nodeIndex);
 		bool minimalCheckForward(int nodeIndex);
 
+
+		void addNewNode(KcolorGraphNode * node);
+
+		int getProblemSize() { return this->CurrentGraph.size();}
+
+
 private:
 
 		std::multimap<int,KcolorGraphDomainDeletion> history;

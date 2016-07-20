@@ -23,8 +23,8 @@ void KcolorGraphProblem::initialize(int size, int orderingHeuristicOption)
 {
 
 	//Create n nodes
-	deque<KcolorGraphNode*> colorGraph;
-	this->CurrentGraph = colorGraph;
+	//deque<KcolorGraphNode*> colorGraph;
+	//this->CurrentGraph = colorGraph;
 
 	int min,max;
 	min = 1;
@@ -364,6 +364,11 @@ void KcolorGraphProblem::addDomainDeletionToHistory(KcolorGraphNode *causeNode, 
 	cout << ptab << ptab << "Adding - \"node: " << causeNode->ID << " deleted: "<< value << " in node: " <<filteredNode->ID << "\" - to the history " << endl;
 	KcolorGraphDomainDeletion deletion(value,filteredNode);
 	history.insert(std::pair<char,KcolorGraphDomainDeletion>(causeNode->ID,deletion));
+}
+
+void KcolorGraphProblem::addNewNode(KcolorGraphNode * node)
+{
+	this->CurrentGraph.push_back(node);
 }
 
 /*

@@ -33,6 +33,11 @@ public:
 	/*Restore a single value in the domain of the current node*/
 	void restoreValueDomain(std::string value);
 
+	std::deque<std::string> getOriginalColorDomainCopy() { return this->originalColorDomain;}
+	std::deque<std::string> getTemporalColorDomainCopy() { return this->temporalColorDomain;}
+
+
+
 private:
 	std::deque<std::string> backupTemporalDomain;
 };

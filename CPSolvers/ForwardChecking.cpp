@@ -16,20 +16,11 @@ ForwardChecking::ForwardChecking(int problemSize_ ,std::string problemType)
 	this->problemSize = problemSize_;
 
 
-	if(problemType =="ColorGraph")
-		this->problem = new KcolorGraphProblem();
-}
 
-/*
- * Initialize the Forward Checking algorithm: Generate a new problem and try to solve it.
- */
-void ForwardChecking::Start(){
-
-	cout << "\t\t\t\t Starting Forward Checking for K-coloring graph" << endl;
-
+	this->problem = new KcolorGraphProblem();
 
 	if(this->problemSize==4)
-		this->problem->initializeExample();
+			this->problem->initializeExample();
 	else
 		this->problem->initialize(this->problemSize,1);
 
@@ -38,6 +29,28 @@ void ForwardChecking::Start(){
 		this->problem->printAllDomains();
 		this->problem->printAllConstraints();
 	}
+
+
+}
+ForwardChecking::ForwardChecking(string problemType, string instanceFilename)
+{
+	cout << "problemType: "<<problemType<<"."<<endl;
+
+	FileHandler fileHandler(instanceFilename);
+
+	this->problem = fileHandler.readInputFiles();
+	this->problemSize = this->problem->getProblemSize();
+
+}
+
+
+
+/*
+ * Initialize the Forward Checking algorithm: Generate a new problem and try to solve it.
+ */
+void ForwardChecking::Start(){
+
+	cout << "\t\t\t\t Starting Forward Checking for K-coloring graph" << endl;
 
 	//for each node in the graph.
 	for(int i=0;i<this->problemSize;i++)

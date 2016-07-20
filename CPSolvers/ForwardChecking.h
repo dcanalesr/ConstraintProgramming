@@ -1,9 +1,12 @@
 #include "headers.h"
 #include <string>
 
+using namespace std;
+
 class ForwardChecking{
 public:
 	ForwardChecking(int problemSize_,std::string problemType);
+	ForwardChecking(string problemType, string instanceFilename);
 	Problem* problem;
 	int problemSize;
 	void Start();

@@ -17,20 +17,14 @@ BackTrack::BackTrack(int problemSize_ ,std::string problemType)
 
 	if(problemType =="ColorGraph")
 		this->problem = new KcolorGraphProblem();
+	else
+		this->problem = new KcolorGraphProblem();
 
 	cout << "problemType: "<<problemType<<"."<<endl;
-}
 
-
-/*
- * Initialize the BackTrack algorithm: Generate a new problem and try to solve it.
- */
-void BackTrack::Start(){
-
-	cout << "\t\t\t\t Starting Backtrack for K-coloring graph" << endl;
 
 	if(this->problemSize==4)
-		this->problem->initializeExample();
+			this->problem->initializeExample();
 	else
 		this->problem->initialize(this->problemSize,1);
 
@@ -41,6 +35,27 @@ void BackTrack::Start(){
 	}
 
 
+
+}
+
+BackTrack::BackTrack(string problemType, string instanceFilename)
+{
+	cout << "problemType: "<<problemType<<"."<<endl;
+
+	FileHandler fileHandler(instanceFilename);
+
+	this->problem = fileHandler.readInputFiles();
+	this->problemSize = this->problem->getProblemSize();
+
+}
+
+
+/*
+ * Initialize the BackTrack algorithm: Generate a new problem and try to solve it.
+ */
+void BackTrack::Start(){
+
+	cout << "\t\t\t\t Starting Backtrack for K-coloring graph" << endl;
 
 	//for each node in the graph.
 	for(int i=0;i<this->problemSize;i++)
@@ -61,8 +76,10 @@ void BackTrack::Start(){
 			i-=2;
 		}
 		//check if the graph finished instantiating all nodes.
+
 		if(i==this->problemSize-1)
 		{
+
 
 			this->problem->checkSetBestSolution();
 			i--;
@@ -71,6 +88,8 @@ void BackTrack::Start(){
 	}
 	this->problem->printFinalResults();
 }
+
+
 
 
 

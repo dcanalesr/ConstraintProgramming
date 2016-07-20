@@ -10,10 +10,12 @@
 
 #include "Problem.h"
 #include "ForwardChecking.h"
+#include "MinimalForwardChecking.h"
 #include "KcolorGraphNode.h"
 #include "KcolorDomainDeletion.h"
 #include "KcolorGraphProblem.h"
 #include "BackTrack.h"
+#include "FileHandler.h"
 
 
 
