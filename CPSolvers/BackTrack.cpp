@@ -1,16 +1,10 @@
-/*
- * kColorBackTrack.cpp
- *
- *  Created on: 20/10/2015
- *      Author: dario
- */
 #include "headers.h"
 using namespace std;
 #include <iostream>
 #include <deque>
 
 
-BackTrack::BackTrack(int problemSize_ ,std::string problemType, bool isOptimization_)
+BackTrack::BackTrack(int problemSize_,std::string problemType, bool isOptimization_)
 {
 
 	this->isOptimization = isOptimization_;
@@ -36,6 +30,8 @@ BackTrack::BackTrack(int problemSize_ ,std::string problemType, bool isOptimizat
 		this->problem->printAllDomains();
 		this->problem->printAllConstraints();
 	}
+
+
 
 
 

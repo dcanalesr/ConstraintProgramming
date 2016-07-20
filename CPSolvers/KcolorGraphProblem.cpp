@@ -390,9 +390,37 @@ void KcolorGraphProblem::addDomainDeletionToHistory(KcolorGraphNode *causeNode,
 
 void KcolorGraphProblem::initializeAncestors()
 {
-	for(int i=0;i<this->CurrentGraph;i++){
+	for(int i=0;i<this->CurrentGraph.size();i++){
 		this->CurrentGraph[i]->initializeAncestors();
 	}
+
+	this->CurrentGraph[3]->printInducedAncestors();
+
+
+	this->CurrentGraph[1]->induceAncestors(this->CurrentGraph[4]);
+
+}
+
+int KcolorGraphProblem::getMostRecentrlyInstancedAncestorIndex(int nodeIndex)
+{
+	return this->CurrentGraph[nodeIndex]->getMosRecentInstancedAncestor()->ID;
+}
+
+void KcolorGraphProblem::induceAncestors(int futureNodeIndex, int inducedNodeIndex)
+{
+	cout << "Inducind ancestors from node: "<< futureNodeIndex << " to: " <<inducedNodeIndex<< endl;
+
+	this->CurrentGraph[inducedNodeIndex]->printInducedAncestors();
+
+	this->CurrentGraph[futureNodeIndex]->printInducedAncestors();
+
+	this->CurrentGraph[inducedNodeIndex]->printInducedAncestors();
+
+
+	this->CurrentGraph[inducedNodeIndex]->induceAncestors(this->CurrentGraph[futureNodeIndex]);
+
+
+	this->CurrentGraph[futureNodeIndex]->restoreInducedAncestors();
 }
 
 /*

@@ -2,8 +2,8 @@
 
 all: 
 
-	g++ -c -std=c++14 KcolorGraphNode.cpp KcolorGraphProblem.cpp BackTrack.cpp main.cpp ForwardChecking.cpp MinimalForwardChecking.cpp FileHandler.cpp
-	g++ -o CPSolvers  KcolorGraphNode.o KcolorGraphProblem.o BackTrack.o ForwardChecking.o MinimalForwardChecking.o FileHandler.o main.o
+	g++ -c -std=c++14 KcolorGraphNode.cpp KcolorGraphProblem.cpp BackTrack.cpp main.cpp ForwardChecking.cpp MinimalForwardChecking.cpp FileHandler.cpp BacktrackGbj.cpp
+	g++ -o CPSolvers  KcolorGraphNode.o KcolorGraphProblem.o BackTrack.o ForwardChecking.o MinimalForwardChecking.o BacktrackGbj.cpp FileHandler.o main.o
 
 #define clean
 clean:

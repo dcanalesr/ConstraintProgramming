@@ -165,12 +165,75 @@ void KcolorGraphNode::initializeAncestors()
 	for(int i=0;i<this->constraints.size();i++)
 	{
 		if(this->ID>this->constraints[i]->ID)
-			this->ancestors[this->ID>this->constraints[i]->ID] = this->constraints[i];
+			this->ancestors[this->constraints[i]->ID] = this->constraints[i];
 	}
 
 	this->inducedAncestors = this->ancestors;
+}
 
+void KcolorGraphNode::printAncestors()
+{
+	cout << "Ancestors of : "<< this->ID<< endl;
+	for(map<int,KcolorGraphNode *>::iterator it = this->ancestors.begin(); it != this->ancestors.end();++it)
+	{
+		cout << "ID: " << it->first << endl;
+	}
+
+}
+
+void KcolorGraphNode::printInducedAncestors()
+{
+	cout << "--- Current induced Ancestors of : "<< this->ID<< "---" <<endl;
+	for(map<int,KcolorGraphNode *>::iterator it = this->inducedAncestors.begin(); it != this->inducedAncestors.end();++it)
+	{
+		cout << "ID: " << it->first << endl;
+	}
+}
+
+void KcolorGraphNode::induceAncestors(KcolorGraphNode* futureNode)
+{
+	for(map<int,KcolorGraphNode *>::iterator it = futureNode->inducedAncestors.begin(); it != futureNode->inducedAncestors.end();++it)
+	{
+		if(it->first<this->ID)
+			this->inducedAncestors[it->first] = it->second;
+		else
+			break; // iterator has reached ancestors of "futureNode" that has ID >= current ID, thus cannot be induced.
+	}
 
 
 }
+
+void KcolorGraphNode::restoreInducedAncestors()
+{
+	cout <<" Restoring induced ancestors of node:" << this->ID << endl;
+	this->inducedAncestors = this->ancestors;
+}
+
+/*
+ * Find and return most recently instanced ancestor. If current node hasn't instanciated ancestors, return null
+ */
+KcolorGraphNode * KcolorGraphNode::getMosRecentInstancedAncestor()
+{
+
+	if(this->ID ==1)
+		return NULL; //the first node hasn't ancestors.
+
+
+	//Because of the ancestors list is a map with induced order
+	//we can go over an iterator starting from the end.
+
+	std::map<int,KcolorGraphNode *>::reverse_iterator rit;
+	for (rit=this->inducedAncestors.rbegin(); rit!=this->inducedAncestors.rend(); ++rit)
+	{
+		if(rit->second->AsignedColor != rit->second->defaultColor)
+			return rit->second;
+	}
+
+	return NULL;//this line should't be reached because at least 1 ancestor should be instanciated before current
+
+}
+
+
+
+
 

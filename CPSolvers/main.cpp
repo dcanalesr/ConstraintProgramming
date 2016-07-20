@@ -71,6 +71,21 @@ int main(int argc,char* argv[])
 			}
 			mfc->Start();
 		}
+		else if(algorithm == "btgbj")
+		{
+			BackTrackGbj * btgbj;
+
+			if(instanceFilename!="")
+			{
+				btgbj = new BackTrackGbj(problemType,instanceFilename, isOptimization);
+			}
+			else
+			{
+				btgbj = new BackTrackGbj(problemSize,problemType, isOptimization);
+			}
+			btgbj->Start();
+
+		}
 		else
 			defaultErrorMessage(argc,argv);
 

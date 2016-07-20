@@ -15,7 +15,9 @@
 #include "KcolorDomainDeletion.h"
 #include "KcolorGraphProblem.h"
 #include "BackTrack.h"
+#include "BackTrackGbj.h"
 #include "FileHandler.h"
+
 
 
 

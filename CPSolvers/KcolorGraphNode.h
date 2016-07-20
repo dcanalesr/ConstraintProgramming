@@ -1,10 +1,12 @@
 #include <deque>
 #include "headers.h"
 #include <string>
+#include <map>
 
 
 //Node class of the k color graph problem.
 
+using namespace std;
 
 class KcolorGraphNode{
 public:
@@ -39,9 +41,23 @@ public:
 
 	void initializeAncestors();
 
-private:
-	std::deque<std::string> backupTemporalDomain;
+	void printAncestors();
+	void printInducedAncestors();
+
+	void induceAncestors(KcolorGraphNode * futureNode);
+	void restoreInducedAncestors();
+
+	/*
+	 * Find and return most recently instanced ancestor. If current node hasn't instanciated ancestors, return null
+	 */
+	KcolorGraphNode * getMosRecentInstancedAncestor();
+
 
 	std::map<int,KcolorGraphNode *> ancestors;
 	std::map<int,KcolorGraphNode *> inducedAncestors;
+
+private:
+	std::deque<std::string> backupTemporalDomain;
+
+
 };

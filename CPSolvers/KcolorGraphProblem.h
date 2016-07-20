@@ -52,7 +52,9 @@ public:
 		int numberOfInstantiations;
 
 		void initializeAncestors();
+		virtual int getMostRecentrlyInstancedAncestorIndex(int nodeIndex);
 
+		void induceAncestors(int inducingNodeIndex, int inducedNodeIndex);
 
 private:
 
