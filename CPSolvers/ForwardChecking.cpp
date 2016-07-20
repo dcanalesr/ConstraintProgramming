@@ -11,9 +11,11 @@ using namespace std;
 #include <string>
 
 
-ForwardChecking::ForwardChecking(int problemSize_ ,std::string problemType)
+ForwardChecking::ForwardChecking(int problemSize_ ,std::string problemType, bool isOptimization_)
 {
+	this->isOptimization = isOptimization_;
 	this->problemSize = problemSize_;
+
 
 
 
@@ -32,8 +34,10 @@ ForwardChecking::ForwardChecking(int problemSize_ ,std::string problemType)
 
 
 }
-ForwardChecking::ForwardChecking(string problemType, string instanceFilename)
+ForwardChecking::ForwardChecking(string problemType, string instanceFilename, bool isOptimization_)
 {
+	this->isOptimization = isOptimization_;
+
 	cout << "problemType: "<<problemType<<"."<<endl;
 
 	FileHandler fileHandler(instanceFilename);
@@ -74,7 +78,8 @@ void ForwardChecking::Start(){
 		{
 			this->problem->checkSetBestSolution();
 			i--;
-			break; //REMOVE THIS IN ORDER TO GET A OPTIMIZATION PROBLEM.
+			if(!this->isOptimization)
+				break; //REMOVE THIS IN ORDER TO GET A OPTIMIZATION PROBLEM.
 		}
 	}
 	this->problem->printFinalResults();
@@ -108,7 +113,7 @@ bool ForwardChecking::label(int n)
 		}
 	}
 	//Backtrack is needed, restore the backup made.
-	if(n-1>0)
+	if(n-1>=0)
 	{
 		this->problem->restoreBakupTemporalDomain(n);
 		//Restore domain of variables filtered by node i-1.

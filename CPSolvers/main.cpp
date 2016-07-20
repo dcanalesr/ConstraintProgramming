@@ -8,7 +8,7 @@ using namespace std;
 
 
 
-bool handleParams(int argc, char* argv[], int &seed, string &problem, int &problemSize, string &algorithm, string &instanceFilename);
+bool handleParams(int argc, char* argv[], int &seed, string &problem, int &problemSize, string &algorithm, string &instanceFilename, bool& isOptimization);
 void defaultErrorMessage(int argc, char* argv[]);
 
 int main(int argc,char* argv[])
@@ -18,7 +18,11 @@ int main(int argc,char* argv[])
 	string algorithm,problemType;
 	string instanceFilename ="";
 
-	bool resp = handleParams(argc,argv,seed, problemType, problemSize, algorithm,instanceFilename);
+	bool isOptimization=false;
+
+	bool resp = handleParams(argc,argv,seed, problemType, problemSize, algorithm,instanceFilename, isOptimization);
+
+
 	if(resp)
 	{
 		srand(seed);
@@ -30,11 +34,11 @@ int main(int argc,char* argv[])
 
 			if(instanceFilename!="")
 			{
-				bt = new BackTrack(problemType,instanceFilename);
+				bt = new BackTrack(problemType,instanceFilename, isOptimization);
 			}
 			else
 			{
-				bt = new BackTrack(problemSize,problemType);
+				bt = new BackTrack(problemSize,problemType, isOptimization);
 			}
 
 			bt->Start();
@@ -45,11 +49,11 @@ int main(int argc,char* argv[])
 
 			if(instanceFilename!="")
 			{
-				fc = new ForwardChecking(problemType,instanceFilename);
+				fc = new ForwardChecking(problemType,instanceFilename, isOptimization);
 			}
 			else
 			{
-				fc = new ForwardChecking(problemSize,problemType);
+				fc = new ForwardChecking(problemSize,problemType, isOptimization);
 			}
 			fc->Start();
 		}
@@ -59,11 +63,11 @@ int main(int argc,char* argv[])
 
 			if(instanceFilename!="")
 			{
-				//mfc = new MinimalForwardChecking(problemType,instanceFilename);
+				mfc = new MinimalForwardChecking(problemType,instanceFilename,isOptimization);
 			}
 			else
 			{
-				mfc = new MinimalForwardChecking(problemSize,problemType);
+				mfc = new MinimalForwardChecking(problemSize,problemType,isOptimization);
 			}
 			mfc->Start();
 		}
@@ -74,10 +78,10 @@ int main(int argc,char* argv[])
 	}
 }
 
-bool handleParams(int argc, char* argv[], int &seed,string &problem, int &problemSize, string &algorithm, string &instanceFilename)
+bool handleParams(int argc, char* argv[], int &seed,string &problem, int &problemSize, string &algorithm, string &instanceFilename, bool& isOptimization )
 {
 
-	const int kExpectedArgc = 9;
+	const int kExpectedArgc = 11;
 	if (argc != kExpectedArgc)
 	{
 		defaultErrorMessage(argc,argv);
@@ -92,31 +96,42 @@ bool handleParams(int argc, char* argv[], int &seed,string &problem, int &proble
 		   {
 			   seed = atoi(argv[++i]);
 			   paramsCollected++;
-			   cout << "seed collected!"<<endl;
+
 		   }
 		   else if(strcmp(argv[i], "-p")==0)
 		   {
 			   problem = argv[++i];
 			   paramsCollected++;
-			   cout << "problem collected!"<<endl;
+
 		   }
 		   else if(strcmp(argv[i], "-ps")==0)
 		   {
 			   problemSize = atoi(argv[++i]);
 			   paramsCollected++;
-			   cout << "problem size collected!"<<endl;
+
 		   }
 		   else if(strcmp(argv[i], "-if")==0)
 		   {
 			   instanceFilename = argv[++i];
 			   paramsCollected++;
-			   cout << "instance file name collected!"<<endl;
+		   }
+		   else if(strcmp(argv[i], "-is")==0)
+		   {
+			   int is=0;
+			   is = atoi(argv[++i]);
+
+			   if(is==0)
+				   isOptimization=false;
+			   else
+				   isOptimization=true;
+
+			   paramsCollected++;
+
 		   }
 		   else if(strcmp(argv[i], "-a")==0)
 		   {
 			   algorithm = argv[++i];
 			   paramsCollected++;
-			   cout << "algorithm collected!"<<endl;
 		   }
 		}
 		if(paramsCollected>=4)
@@ -137,16 +152,17 @@ void defaultErrorMessage(int argc, char* argv[])
 	   << "-s seed "
 	   << "-p problem "
 	   << "-ps problemSize "
-	   << "-a algorithm "
 	   << "-if instanceFileName (do not specify -ps option using this)"
+	   << "-is isOptimization (=1 if it is optimization problem, 0 otherwise)"
+	   << "-a algorithm "
 	   << endl
 	   << "Options for problem are: ColorGraph" <<endl
 	   << "Options for algorithm are: bt, fc, mfc" << endl
 	   << "Examples: " << endl
-	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -a fc" << endl
-	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -a bt" << endl
-	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -a mfc" << endl
-	   << "./CPSolvers -s 1 -p ColorGraph -if instances/dsjc125.1.col -a mfc" << endl
+	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -is 0 -a fc" << endl
+	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -is 0 -a bt" << endl
+	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -is 0 -a mfc" << endl
+	   << "./CPSolvers -s 1 -p ColorGraph -if instances/dsjc125.1.col -is 0 -a mfc" << endl
 	   << endl << endl
 	   << "Current is:" << endl;
 

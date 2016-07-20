@@ -159,3 +159,18 @@ void KcolorGraphNode::restoreBakupTemporalDomain()
 	//reset temporal domain after the restore
 	this->backupTemporalDomain.clear();
 }
+
+void KcolorGraphNode::initializeAncestors()
+{
+	for(int i=0;i<this->constraints.size();i++)
+	{
+		if(this->ID>this->constraints[i]->ID)
+			this->ancestors[this->ID>this->constraints[i]->ID] = this->constraints[i];
+	}
+
+	this->inducedAncestors = this->ancestors;
+
+
+
+}
+

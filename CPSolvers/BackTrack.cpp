@@ -10,9 +10,12 @@ using namespace std;
 #include <deque>
 
 
-BackTrack::BackTrack(int problemSize_ ,std::string problemType)
+BackTrack::BackTrack(int problemSize_ ,std::string problemType, bool isOptimization_)
 {
+
+	this->isOptimization = isOptimization_;
 	this->problemSize = problemSize_;
+
 
 
 	if(problemType =="ColorGraph")
@@ -38,14 +41,21 @@ BackTrack::BackTrack(int problemSize_ ,std::string problemType)
 
 }
 
-BackTrack::BackTrack(string problemType, string instanceFilename)
+BackTrack::BackTrack(string problemType, string instanceFilename, bool isOptimization_)
 {
+	this->isOptimization = isOptimization_;
+
+
 	cout << "problemType: "<<problemType<<"."<<endl;
 
 	FileHandler fileHandler(instanceFilename);
 
 	this->problem = fileHandler.readInputFiles();
 	this->problemSize = this->problem->getProblemSize();
+
+	this->problem->printAllConstraints();
+
+
 
 }
 
@@ -83,7 +93,8 @@ void BackTrack::Start(){
 
 			this->problem->checkSetBestSolution();
 			i--;
-			break; //REMOVE THIS IN ORDER TO GET A OPTIMIZATION PROBLEM.
+			if(!this->isOptimization)
+				break; //REMOVE THIS IN ORDER TO GET A OPTIMIZATION PROBLEM.
 		}
 	}
 	this->problem->printFinalResults();
@@ -116,7 +127,7 @@ bool BackTrack::label(int n)
 		}
 	}
 	//Backtrack is needed, restore the backup made.
-	if(n-1>0)
+	if(n-1>=0)
 		this->problem->restoreDomain(n);
 	return false; //return false in the default case.
 }

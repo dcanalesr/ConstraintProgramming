@@ -2,6 +2,7 @@
 #include "headers.h"
 #include <string>
 
+
 //Node class of the k color graph problem.
 
 
@@ -36,8 +37,11 @@ public:
 	std::deque<std::string> getOriginalColorDomainCopy() { return this->originalColorDomain;}
 	std::deque<std::string> getTemporalColorDomainCopy() { return this->temporalColorDomain;}
 
-
+	void initializeAncestors();
 
 private:
 	std::deque<std::string> backupTemporalDomain;
+
+	std::map<int,KcolorGraphNode *> ancestors;
+	std::map<int,KcolorGraphNode *> inducedAncestors;
 };
