@@ -33,7 +33,7 @@ BackTrack::BackTrack(int problemSize_,std::string problemType, bool isOptimizati
 
 
 
-
+	this->problem->initializeAncestorsFutureConnectedVariables();
 
 }
 
@@ -51,6 +51,7 @@ BackTrack::BackTrack(string problemType, string instanceFilename, bool isOptimiz
 
 	this->problem->printAllConstraints();
 
+	this->problem->initializeAncestorsFutureConnectedVariables();
 
 
 }
@@ -62,6 +63,8 @@ BackTrack::BackTrack(string problemType, string instanceFilename, bool isOptimiz
 void BackTrack::Start(){
 
 	cout << "\t\t\t\t Starting Backtrack for K-coloring graph" << endl;
+
+	Control::resetElapsedTime();
 
 	//for each node in the graph.
 	for(int i=0;i<this->problemSize;i++)
@@ -93,6 +96,8 @@ void BackTrack::Start(){
 				break; //REMOVE THIS IN ORDER TO GET A OPTIMIZATION PROBLEM.
 		}
 	}
+
+
 	this->problem->printFinalResults();
 }
 

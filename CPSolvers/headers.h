@@ -17,6 +17,7 @@
 #include "BackTrack.h"
 #include "BackTrackGbj.h"
 #include "FileHandler.h"
+#include "Control.h"
 
 
 

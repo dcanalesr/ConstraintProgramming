@@ -13,5 +13,4 @@ public:
 private:
 	bool label(int n); //trata de instanciar un nodo, si lo logra instanciar retorna true, sino false
 	bool isOptimization;
-
 };

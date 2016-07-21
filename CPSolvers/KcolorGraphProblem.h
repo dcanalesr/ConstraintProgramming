@@ -1,8 +1,13 @@
+#ifndef KCOLOR_GRAPH_PROBLEM
+#define KCOLOR_GRAPH_PROBLEM
+
+
 #include <deque>
 #include "headers.h"
 #include <string>
 #include <map>
 
+static int numberOfChecks;
 
 class KcolorGraphProblem: public Problem
 {
@@ -11,14 +16,19 @@ public:
 		std::deque<KcolorGraphNode *> BestGraph;
 		int BestOFValue;
 
+		int numberOfInstantiations;
+
 		KcolorGraphProblem();
 
 		void initializeExample();
+		void initializeExampleBackTrackGbj();
 		void initialize(int size, int orderingHeuristicOption);
+
 
 
 		void printAllDomains();
 		void printAllConstraints();
+		void printFinalResults();
 
 		void saveBackupTemporalDomain(int backupNodeIndex);
 		bool assignNextValue(int nodeIndex);
@@ -26,12 +36,12 @@ public:
 
 
 		/*
-		 * Checking if the current solution is better than the best.
-		 */
+		* Checking if the current solution is better than the best.
+		*/
 		void checkSetBestSolution();
 
 
-		void printFinalResults();
+
 
 		/*Restoring domains*/
 		virtual void restoreDomain(int nodeIndex);
@@ -44,17 +54,19 @@ public:
 		bool checkForward(int nodeIndex);
 		bool minimalCheckForward(int nodeIndex);
 
+		bool wakeUpMinimalFilters(KcolorGraphNode * futureNode, int indexNodeEnd);
+
 
 		void addNewNode(KcolorGraphNode * node){this->CurrentGraph.push_back(node);}
-
 		int getProblemSize() { return this->CurrentGraph.size();}
 
-		int numberOfInstantiations;
 
-		void initializeAncestors();
-		virtual int getMostRecentrlyInstancedAncestorIndex(int nodeIndex);
 
+		/* Ancestors and future connected variables*/
+		void initializeAncestorsFutureConnectedVariables(); //Past and future connected variables in distinct lists.
+		virtual int getMostRecentrlyInstancedInducedAncestorIndex(int nodeIndex);
 		void induceAncestors(int inducingNodeIndex, int inducedNodeIndex);
+		void restoreInducedAncestors(int inducedNodeIndex);
 
 private:
 
@@ -69,4 +81,5 @@ private:
 
 
 };
+#endif
 

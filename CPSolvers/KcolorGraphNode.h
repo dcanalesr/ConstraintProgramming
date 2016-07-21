@@ -39,9 +39,11 @@ public:
 	std::deque<std::string> getOriginalColorDomainCopy() { return this->originalColorDomain;}
 	std::deque<std::string> getTemporalColorDomainCopy() { return this->temporalColorDomain;}
 
-	void initializeAncestors();
+	void initializeAncestorsFutureConnectedVariables();
+
 
 	void printAncestors();
+	void printFutureConnectedVariables();
 	void printInducedAncestors();
 
 	void induceAncestors(KcolorGraphNode * futureNode);
@@ -50,11 +52,13 @@ public:
 	/*
 	 * Find and return most recently instanced ancestor. If current node hasn't instanciated ancestors, return null
 	 */
-	KcolorGraphNode * getMosRecentInstancedAncestor();
+	KcolorGraphNode * getMosRecentInstancedInducedAncestor();
 
 
 	std::map<int,KcolorGraphNode *> ancestors;
 	std::map<int,KcolorGraphNode *> inducedAncestors;
+
+	std::map<int,KcolorGraphNode *> futureConnectedVariables;
 
 private:
 	std::deque<std::string> backupTemporalDomain;

@@ -32,6 +32,7 @@ ForwardChecking::ForwardChecking(int problemSize_ ,std::string problemType, bool
 		this->problem->printAllConstraints();
 	}
 
+	this->problem->initializeAncestorsFutureConnectedVariables();
 
 }
 ForwardChecking::ForwardChecking(string problemType, string instanceFilename, bool isOptimization_)
@@ -45,6 +46,8 @@ ForwardChecking::ForwardChecking(string problemType, string instanceFilename, bo
 	this->problem = fileHandler.readInputFiles();
 	this->problemSize = this->problem->getProblemSize();
 
+
+	this->problem->initializeAncestorsFutureConnectedVariables();
 }
 
 
@@ -56,6 +59,7 @@ void ForwardChecking::Start(){
 
 	cout << "\t\t\t\t Starting Forward Checking for K-coloring graph" << endl;
 
+	Control::resetElapsedTime();
 	//for each node in the graph.
 	for(int i=0;i<this->problemSize;i++)
 	{
