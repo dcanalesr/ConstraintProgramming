@@ -32,6 +32,7 @@ public:
 
 		void saveBackupTemporalDomain(int backupNodeIndex);
 		bool assignNextValue(int nodeIndex);
+		bool assignNextValueAddingToBackup(int nodeIndex);
 		bool pastConsistent(int n);
 
 
@@ -54,7 +55,7 @@ public:
 		bool checkForward(int nodeIndex);
 		bool minimalCheckForward(int nodeIndex);
 
-		bool wakeUpMinimalFilters(KcolorGraphNode * futureNode, int indexNodeEnd);
+		bool wakeUpMinimalFilters(int futureNodeIndex, int indexNodeEndFilter);
 
 
 		void addNewNode(KcolorGraphNode * node){this->CurrentGraph.push_back(node);}
@@ -77,7 +78,6 @@ private:
 		/* maintain a history of deletions in temporal domains of any variable*/
 		void addDomainDeletionToHistory(KcolorGraphNode *causeNode, KcolorGraphNode *filteredNode, std::string &value);
 		void restoreAllDeletionsFromHistory(KcolorGraphNode *causeNode);
-
 
 
 };

@@ -165,7 +165,7 @@ void KcolorGraphNode::saveBackupTemporalDomain()
 	{
 		//reset temporal domain
 
-		cout<<endl << "Saving backup of temporal domain of node: "<<this->ID<<endl;
+		cout<<endl <<endl<< "Saving backup of temporal domain of node: "<<this->ID<<endl;
 
 		//Save temporal domain of current node, just in case of backtrack needed.
 		this->backupTemporalDomain = this->temporalColorDomain;

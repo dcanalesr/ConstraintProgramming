@@ -347,7 +347,7 @@ bool KcolorGraphProblem::checkForward(int nodeIndex)
 		{
 			//if the current assigned color == color of the domain.
 			++numberOfChecks;
-			cout << "------------------------------------------------------------------->Number of checks: "<< numberOfChecks << " - with color: "<<futureNode->temporalColorDomain[k]<<endl;
+			//cout << "------------------------------------------------------------------->Number of checks: "<< numberOfChecks << " - with color: "<<futureNode->temporalColorDomain[k]<<endl;
 			if (checkNode->AsignedColor == futureNode->temporalColorDomain[k])
 			{
 
@@ -394,27 +394,34 @@ bool KcolorGraphProblem::minimalCheckForward(int nodeIndex)
 		KcolorGraphNode * futureNode = futureIt->second;
 
 
-		cout << ptab << " Node:" <<checkNode->ID << " searching for valid value in domain of node:"<<futureNode->ID<<endl;
-
+		cout << ptab << " Node:" <<checkNode->ID << " searching for valid value in domain of node:"<<futureNode->ID <<endl;
 		//for each color in the domain of that node look his temporalDomain
 		for (int k = 0; k < futureNode->temporalColorDomain.size(); k++)
 		{
+
+
+
 			//if the current assigned color == color of the domain.
 			++numberOfChecks;
+			//cout << "------------------------------------------------------------------->Number of checks: "<< numberOfChecks << " - with color: "<<futureNode->temporalColorDomain[k]<< "-> ";
 			if (checkNode->AsignedColor == futureNode->temporalColorDomain[k])
 			{
-
-				cout << ptab << ptab<< "Deleting value:" << futureNode->temporalColorDomain[k] << " of the node: ID:"<<futureNode->ID<< endl;
+				cout << ptab << ptab<< "Deleting value:" << futureNode->temporalColorDomain[k] << "(node "<<futureNode->ID<<")"<< endl;
 
 				//Add the deleted value to history
+
 				this->addDomainDeletionToHistory(checkNode,futureNode,futureNode->temporalColorDomain[k]);
 				futureNode->temporalColorDomain.erase(futureNode->temporalColorDomain.begin()+ k);
+
 
 
 				/*
 				 * Waking up all minimal check Forward from node0 to before the node who deleted the value.
 				 */
-				this->wakeUpMinimalFilters(futureNode, checkNode->ID);
+				if(checkNode->ID-1>=0 && futureNode->temporalColorDomain.size()!=0)
+					this->wakeUpMinimalFilters(futureNode->ID, checkNode->ID);
+
+
 
 
 
@@ -428,12 +435,13 @@ bool KcolorGraphProblem::minimalCheckForward(int nodeIndex)
 
 					return false;
 				}
+				k--;//one color was deleted in the domain of the futureNode -> k should stay the same.
 			}
 			else
 			{
 				//If this line is reached, one value consistent has been found.
 				//Because this is minimal forward checking, the algorithm stop filtering for this node here.
-				cout << ptab << ptab << ptab << "Value:" << futureNode->temporalColorDomain[k] << " valid!, stoping the search" << endl;
+				cout << ptab << ptab << ptab << "Value:" << futureNode->temporalColorDomain[k] << " valid! " << " (node: "<<futureNode->ID<<")"<< endl;
 				break;
 			}
 		}
@@ -447,64 +455,71 @@ bool KcolorGraphProblem::minimalCheckForward(int nodeIndex)
 /*
  * Perform a minimal check forward from node0  until before nodeEnd. If the future node run out of
  */
-bool KcolorGraphProblem::wakeUpMinimalFilters(KcolorGraphNode * futureNode, int indexNodeEnd)
+bool KcolorGraphProblem::wakeUpMinimalFilters(int futureNodeIndex, int indexNodeEndFilter)
 {
+	KcolorGraphNode * futureNode = this->CurrentGraph[futureNodeIndex];
 
-	cout << ptab << "**** Waking up filterings for Node:" << futureNode->ID << endl;
+	cout << endl<<ptab << "**** Waking up filterings for Node:" << futureNode->ID << endl;
 
 	KcolorGraphNode * checkNode;
 	
 	std::map<int,KcolorGraphNode *>::iterator ancestorIt;
-	for(ancestorIt = futureNode->ancestors.begin(); ancestorIt!= futureNode->ancestors.end();++ancestorIt)
+	for(ancestorIt = futureNode->ancestors.begin(); (ancestorIt->first < indexNodeEndFilter) && ancestorIt != futureNode->ancestors.end();++ancestorIt)
 	{
 
-		//ancestors are ordered by ID so if the iterator reach the indexNodeEnd, no more minimal checkForwards are needed.
-		if(ancestorIt->first > indexNodeEnd)
-			break;
-		else
+
+		checkNode = ancestorIt->second;
+		cout << ptab << ptab << ptab<<" Node: " <<checkNode->ID << " searching for valid value in domain of node: "<<futureNode->ID<< endl;;
+
+		//for each color in the domain of that node look his temporalDomain
+		for (int k = 0; k < futureNode->temporalColorDomain.size(); k++)
 		{
 
-			checkNode = ancestorIt->second;
-			cout << ptab << ptab << ptab<<" Node: " <<checkNode->ID << " searching for valid value in domain of node "<<futureNode->ID<<endl;
 
-			//for each color in the domain of that node look his temporalDomain
-			for (int k = 0; k < futureNode->temporalColorDomain.size(); k++)
+
+			//if the current assigned color == color of the domain.
+			++numberOfChecks;
+			//cout << "------------------------------------------------------------------->Number of checks: "<< numberOfChecks << " - with color: "<<futureNode->temporalColorDomain[k]<< "-> ";
+
+			if (checkNode->AsignedColor == futureNode->temporalColorDomain[k])
 			{
-				//if the current assigned color == color of the domain.
-				++numberOfChecks;
-				if (checkNode->AsignedColor == futureNode->temporalColorDomain[k])
+				cout << ptab << ptab<< "Deleting value: " << futureNode->temporalColorDomain[k] << " of the node: ID:"<<futureNode->ID<< endl;
+
+				//Add the deleted value to history
+
+				this->addDomainDeletionToHistory(checkNode,futureNode,futureNode->temporalColorDomain[k]);
+				futureNode->temporalColorDomain.erase(futureNode->temporalColorDomain.begin()+ k);
+
+
+				//If there is a node in the constraints that reach 0 colors in his domains, the future node j
+				//will reach a dead end.
+				if (futureNode->temporalColorDomain.size() == 0)
 				{
-
-					cout << ptab << ptab<< "Deleting value: " << futureNode->temporalColorDomain[k] << " of the node: ID:"<<futureNode->ID<< endl;
-
-					//Add the deleted value to history
-					this->addDomainDeletionToHistory(checkNode,futureNode,futureNode->temporalColorDomain[k]);
-					futureNode->temporalColorDomain.erase(futureNode->temporalColorDomain.begin()+ k);
-
-
-
-					//If there is a node in the constraints that reach 0 colors in his domains, the future node j
-					//will reach a dead end.
-					if (futureNode->temporalColorDomain.size() == 0)
-					{
-						cout << ptab << ptab << ptab << "Domain of the node: ID:" << futureNode->ID << " empty, returning false " << endl;
-
-						return false;
-					}
+					cout << ptab << ptab << ptab << "Domain of the node: ID:" << futureNode->ID << " empty, returning false " << endl;
+					cout << endl<<ptab << "**** END OF WAKING UP *******" << endl;
+					return false;
 				}
-				else
-				{
-					//If this line is reached, one value consistent has been found.
-					//Because this is minimal forward checking, the algorithm stop filtering for this node here.
-					cout << ptab << ptab << ptab << "Value:" << futureNode->temporalColorDomain[k] << " valid!, stoping the search" << endl;
-					break;
-				}
+				k--;//one color was deleted in the domain of the futureNode -> k should stay the same.
+
 			}
+			else
+			{
+				//If this line is reached, one value consistent has been found.
+				//Because this is minimal forward checking, the algorithm stop filtering for this node here.
+				cout << ptab << ptab << ptab << "Value:" << futureNode->temporalColorDomain[k] << " valid!, stoping the search" << endl;
+				break;
+			}
+
 		}
+
+
 
 	}
 	//return true only if all domains of the future variables could be filtered successfully
 	cout <<ptab << "Returning true"<< endl;
+
+
+	cout << endl<<ptab << "**** END OF WAKING UP *******" << endl;
 	return true;
 
 }
@@ -551,13 +566,10 @@ void KcolorGraphProblem::printFinalResults()
  * Add the deletion of the value "value" in the temporal domain of the node "filteredNode" to the history with
  * a key to the node "causeNode"
  */
-void KcolorGraphProblem::addDomainDeletionToHistory(KcolorGraphNode *causeNode,
-		KcolorGraphNode *filteredNode, std::string &value)
+void KcolorGraphProblem::addDomainDeletionToHistory(KcolorGraphNode *causeNode, KcolorGraphNode *filteredNode, std::string &value)
 {
 
-	cout << ptab << ptab << "Adding - \"node: " << causeNode->ID << " deleted: "
-			<< value << " in node: " << filteredNode->ID
-			<< "\" - to the history " << endl;
+	//cout << ptab << ptab << "Adding - \"node: " << causeNode->ID << " deleted: " << value << " in node: " << filteredNode->ID << "\" - to the history " << endl;
 	KcolorGraphDomainDeletion deletion(value, filteredNode);
 	history.insert(
 			std::pair<char, KcolorGraphDomainDeletion>(causeNode->ID,
@@ -687,6 +699,36 @@ bool KcolorGraphProblem::assignNextValue(int nodeIndex)
 		return true;
 	}
 }
+
+bool KcolorGraphProblem::assignNextValueAddingToBackup(int nodeIndex)
+{
+	if (this->CurrentGraph[nodeIndex]->temporalColorDomain.size() == 0)
+	{
+		//There are no more values in the current temporal domain: Restore the default value of the node.
+		this->CurrentGraph[nodeIndex]->AsignedColor = this->CurrentGraph[nodeIndex]->defaultColor;
+		return false;
+	}
+	else
+	{
+		//assign next color available
+		this->CurrentGraph[nodeIndex]->AsignedColor = this->CurrentGraph[nodeIndex]->temporalColorDomain[0];
+
+		this->CurrentGraph[nodeIndex]->backupTemporalDomain.push_back(this->CurrentGraph[nodeIndex]->AsignedColor);
+
+
+		this->CurrentGraph[nodeIndex]->temporalColorDomain.pop_front();
+		cout << "Instantiating the node: " << this->CurrentGraph[nodeIndex]->ID << " - color: " << this->CurrentGraph[nodeIndex]->AsignedColor << endl;
+
+
+
+		++this->numberOfInstantiations;
+
+		return true;
+	}
+	return true;
+}
+
+
 
 void KcolorGraphProblem::restoreCheckForwardDeletions(int causeNodeIndex)
 {

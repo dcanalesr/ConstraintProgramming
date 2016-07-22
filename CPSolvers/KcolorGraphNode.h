@@ -60,8 +60,10 @@ public:
 
 	std::map<int,KcolorGraphNode *> futureConnectedVariables;
 
-private:
 	std::deque<std::string> backupTemporalDomain;
+
+private:
+
 
 
 };
