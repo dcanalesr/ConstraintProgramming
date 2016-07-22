@@ -1,11 +1,19 @@
-#llama a object para generar los .o antes unir los objetos en el ejecutable 
+CC=			g++ #macro CC is the C compiler to use
+CFLAGS=		-std=c++14 -O3 #-lboost_regex #-O3 #-I #CFLAGS is the list of flags to pass to the compilation command
+INCLUDE = #-L/usr/lib/x86_64-linux-gnu
+DEPS=		BackTrack.hpp BackTrackGbj.hpp Control.hpp fileHandler.hpp ForwardChecking.hpp headers.hpp KcolorDomainDeletion.hpp KcolorGraphNode.hpp KcolorGraphProblem.hpp MinimalForwardChecking.hpp
+OBJS =		KcolorGraphNode.o KcolorGraphProblem.o BackTrack.o ForwardChecking.o MinimalForwardChecking.o BackTrackGbj.o FileHandler.o Control.o main.o
+TARGET =	CPSolvers
 
-all: 
+#rule to specify the dependence of cpp file from .h files.
+%.o: %.cpp 
+	$(CC) -c -o $@ $< $(CFLAGS)
+	
+$(TARGET): $(OBJS)
+	$(CC) $(INCLUDE) -o $@ $^ $(CFLAGS)
+	
+all:	$(TARGET)
 
-	g++ -c -std=c++14 KcolorGraphNode.cpp KcolorGraphProblem.cpp BackTrack.cpp main.cpp ForwardChecking.cpp MinimalForwardChecking.cpp FileHandler.cpp BackTrackGbj.cpp Control.cpp 
-	g++ -o CPSolvers  KcolorGraphNode.o KcolorGraphProblem.o BackTrack.o ForwardChecking.o MinimalForwardChecking.o BackTrackGbj.o FileHandler.o Control.o main.o
-
-#define clean
 clean:
-#-r: recursive -f force *.o todos los .o *~ borrar todos los temporales, tambien borra el ejecutable
-	rm -rf *.o *~ CPSolvers 
+	rm -f $(OBJS) $(TARGET)
+	

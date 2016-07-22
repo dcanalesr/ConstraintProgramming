@@ -3,11 +3,14 @@
 
 
 #include <deque>
-#include "headers.h"
+#include "headers.hpp"
 #include <string>
 #include <map>
 
 static int numberOfChecks;
+
+#include <string>
+#include <iostream>
 
 class KcolorGraphProblem: public Problem
 {
