@@ -84,12 +84,6 @@ bool KcolorGraphNode::checkPastConstraintsBreak()
 			return false;
 	}
 	return true;
-
-
-
-
-
-
 	/* old code:
 	 *
 	//for each node in the list of constraint, if one is violated return false.
@@ -108,6 +102,31 @@ bool KcolorGraphNode::checkPastConstraintsBreak()
 
 	*/
 }
+
+bool KcolorGraphNode::checkPastConstraintsBreakAddingToConflictSet()
+{
+	std::map<int,KcolorGraphNode *>::iterator it;
+	for (it=this->ancestors.begin(); it!=this->ancestors.end(); ++it)
+	{
+		++numberOfChecks;
+		if(this->AsignedColor == it->second->AsignedColor)
+		{
+
+			//add the node ID and the value to the conflict set.
+
+			this->inducedConflictSet[it->first] = it->second;
+
+			return false;
+
+
+		}
+	}
+	return true;
+
+}
+
+
+
 
 /*
  * Restore the temporal domain with the original domain of the current node.
@@ -221,11 +240,20 @@ void KcolorGraphNode::printFutureConnectedVariables(){
 
 void KcolorGraphNode::printInducedAncestors()
 {
-	cout << "--- Current induced Ancestors of : "<< this->ID<< "---" <<endl;
+	cout << "--- Current induced Ancestors of: "<< this->ID<< "---" <<endl;
 	for(map<int,KcolorGraphNode *>::iterator it = this->inducedAncestors.begin(); it != this->inducedAncestors.end();++it)
 	{
 		cout << "ID: " << it->first << endl;
 	}
+}
+void KcolorGraphNode::printInducedConflictSet()
+{
+	cout << "--- Current induced conflict set of: "<< this->ID<< "---" <<endl;
+	for(map<int,KcolorGraphNode *>::iterator it = this->inducedConflictSet.begin(); it != this->inducedConflictSet.end();++it)
+	{
+		cout << "ID: " << it->first << endl;
+	}
+
 }
 
 void KcolorGraphNode::induceAncestors(KcolorGraphNode* futureNode)
@@ -239,6 +267,17 @@ void KcolorGraphNode::induceAncestors(KcolorGraphNode* futureNode)
 	}
 
 
+}
+void KcolorGraphNode::induceConflictSet(KcolorGraphNode * futureNode)
+{
+
+	for(map<int,KcolorGraphNode *>::iterator it = futureNode->inducedConflictSet.begin(); it != futureNode->inducedConflictSet.end();++it)
+	{
+		if(it->first<this->ID)
+			this->inducedAncestors[it->first] = it->second;
+		else
+			break; // iterator has reached ancestors of "futureNode" that has ID >= current ID, thus cannot be induced.
+	}
 }
 
 void KcolorGraphNode::restoreInducedAncestors()
@@ -264,6 +303,26 @@ KcolorGraphNode * KcolorGraphNode::getMosRecentInstancedInducedAncestor()
 	{
 		if(rit->second->AsignedColor != rit->second->defaultColor)
 			return rit->second;
+	}
+
+	return NULL;//this line should't be reached because at least 1 ancestor should be instanciated before current
+
+}
+
+KcolorGraphNode * KcolorGraphNode::getMostRecentInstancedInducedConflict()
+{
+	if(this->ID ==1)
+		return NULL; //the first node hasn't conflict index.
+
+
+	//Because of the conflict set list is a map with induced order
+	//we can go over an iterator starting from the end.
+	std::map<int,KcolorGraphNode *>::reverse_iterator rit;
+	for (rit=this->inducedConflictSet.rbegin(); rit!=this->inducedConflictSet.rend(); ++rit)
+	{
+		//first element counting backwards is the last element:
+		//last element in the ordered list is most recently instanced induced ancestor
+		return rit->second;
 	}
 
 	return NULL;//this line should't be reached because at least 1 ancestor should be instanciated before current

@@ -35,8 +35,10 @@ public:
 
 		void saveBackupTemporalDomain(int backupNodeIndex);
 		bool assignNextValue(int nodeIndex);
-		bool assignNextValueAddingToBackup(int nodeIndex);
-		bool pastConsistent(int n);
+		bool assignNextValueAddingToBackupDomain(int nodeIndex);
+
+		bool pastConsistent(int nodeIndex);
+		bool pastConsistentAddingToConflictSet(int nodeIndex);
 
 
 		/*
@@ -68,9 +70,15 @@ public:
 
 		/* Ancestors and future connected variables*/
 		void initializeAncestorsFutureConnectedVariables(); //Past and future connected variables in distinct lists.
-		virtual int getMostRecentrlyInstancedInducedAncestorIndex(int nodeIndex);
-		void induceAncestors(int inducingNodeIndex, int inducedNodeIndex);
+		virtual int getMostRecentlyInstancedInducedAncestorIndex(int nodeIndex);
+		int getMostRecentlyInstancedInducedConflictIndex(int nodeIndex);
+
+		void induceAncestors(int futureNodeIndex, int inducedNodeIndex);
+		void induceConflictSet(int futureNodeIndex, int inducedNodeIndex);
+
+
 		void restoreInducedAncestors(int inducedNodeIndex);
+		void restoreInducedConflictSet(int inducedNodeIndex);
 
 private:
 

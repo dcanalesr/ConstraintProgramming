@@ -86,6 +86,21 @@ int main(int argc,char* argv[])
 			btgbj->Start();
 
 		}
+		else if(algorithm == "btcbj")
+		{
+			BackTrackCbj * btcbj;
+
+			if(instanceFilename!="")
+			{
+				btcbj = new BackTrackCbj(problemType,instanceFilename, isOptimization);
+			}
+			else
+			{
+				btcbj = new BackTrackCbj(problemSize,problemType, isOptimization);
+			}
+			btcbj->Start();
+
+		}
 		else
 			defaultErrorMessage(argc,argv);
 
@@ -166,13 +181,14 @@ void defaultErrorMessage(int argc, char* argv[])
 	   << "The syntax should be:" << endl
 	   << "-s seed "
 	   << "-p problem "
-	   << "-ps problemSize "
+	   << "-ps problemSize do not specify -if option using this)"
 	   << "-if instanceFileName (do not specify -ps option using this)"
-	   << "-is isOptimization (=1 if it is optimization problem, 0 otherwise)"
+	   << "-is isOptimization"
 	   << "-a algorithm "
 	   << endl
 	   << "Options for problem are: ColorGraph" <<endl
-	   << "Options for algorithm are: bt, fc, mfc" << endl
+	   << "Options for algorithm are: bt, fc, mfc, btgbj, btcbj " << endl
+	   << "Options for isOptimization are: 1 if it is optimization problem, 0 otherwise"
 	   << "Examples: " << endl
 	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -is 0 -a fc" << endl
 	   << "./CPSolvers -s 1 -p ColorGraph -ps 5 -is 0 -a bt" << endl

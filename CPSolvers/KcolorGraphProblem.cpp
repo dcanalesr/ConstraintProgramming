@@ -14,6 +14,8 @@ KcolorGraphProblem::KcolorGraphProblem()
 	this->numberOfInstantiations=0;
 	numberOfChecks=0;
 
+	this->numberOfDeadEnds=0;
+
 }
 
 /*
@@ -321,11 +323,18 @@ void KcolorGraphProblem::checkSetBestSolution()
 /*
  * Check if the current instantiation of node n is consistent with previous nodes in the tree.
  */
-bool KcolorGraphProblem::pastConsistent(int n)
+bool KcolorGraphProblem::pastConsistent(int nodeIndex)
 {
 	//Check if the graph is past consistent until the node n is equal the node n.
-	return this->CurrentGraph[n]->checkPastConstraintsBreak();
+	return this->CurrentGraph[nodeIndex]->checkPastConstraintsBreak();
 }
+
+bool KcolorGraphProblem::pastConsistentAddingToConflictSet(int nodeIndex)
+{
+	return this->CurrentGraph[nodeIndex]->checkPastConstraintsBreakAddingToConflictSet();
+}
+
+
 
 /*
  * Filters the domain future variable of the node i, based on the current color of that node.
@@ -537,6 +546,7 @@ void KcolorGraphProblem::printFinalResults()
 	cout << "- Number of nodes of the graph: "<< this->CurrentGraph.size()<<endl;
 	cout << "- Number of instantiations done: "<< this->numberOfInstantiations<<endl;
 	cout << "- Number of domain checks done: "<< numberOfChecks <<endl;
+	cout << "- Number of deads ends found: " << this->numberOfDeadEnds << endl;
 	cout << "- Elapsed time of algorithm: "<< finaltime<<endl;
 
 
@@ -586,7 +596,7 @@ void KcolorGraphProblem::initializeAncestorsFutureConnectedVariables()
 
 
 
-int KcolorGraphProblem::getMostRecentrlyInstancedInducedAncestorIndex(int nodeIndex)
+int KcolorGraphProblem::getMostRecentlyInstancedInducedAncestorIndex(int nodeIndex)
 {
 
 	KcolorGraphNode * node = this->CurrentGraph[nodeIndex]->getMosRecentInstancedInducedAncestor();
@@ -596,10 +606,18 @@ int KcolorGraphProblem::getMostRecentrlyInstancedInducedAncestorIndex(int nodeIn
 		return node->ID;
 
 }
+int KcolorGraphProblem::getMostRecentlyInstancedInducedConflictIndex(int nodeIndex)
+{
+	KcolorGraphNode * node = this->CurrentGraph[nodeIndex]->getMostRecentInstancedInducedConflict();
+	if(node==NULL)
+		return -1;
+	else
+		return node->ID;
+}
 
 void KcolorGraphProblem::induceAncestors(int futureNodeIndex, int inducedNodeIndex)
 {
-	cout << "Inducind ancestors from node: "<< futureNodeIndex << " to: " <<inducedNodeIndex<< endl;
+	cout << "Inducing ancestors from node: "<< futureNodeIndex << " to: " <<inducedNodeIndex<< endl;
 
 	/*
 	this->CurrentGraph[inducedNodeIndex]->printInducedAncestors();
@@ -611,12 +629,26 @@ void KcolorGraphProblem::induceAncestors(int futureNodeIndex, int inducedNodeInd
 	//this->CurrentGraph[inducedNodeIndex]->printInducedAncestors();
 }
 
+void KcolorGraphProblem::induceConflictSet(int futureNodeIndex, int inducedNodeIndex)
+{
+	cout << "Inducing conflict set from node: "<< futureNodeIndex << " to: " <<inducedNodeIndex<< endl;
+
+	this->CurrentGraph[inducedNodeIndex]->induceConflictSet(this->CurrentGraph[futureNodeIndex]);
+}
+
 
 void KcolorGraphProblem::restoreInducedAncestors(int inducedNodeIndex)
 {
 	cout <<"-Restoring induced ancestors of node:" << inducedNodeIndex << endl;
 	this->CurrentGraph[inducedNodeIndex]->restoreInducedAncestors();
 
+}
+
+void KcolorGraphProblem::restoreInducedConflictSet(int inducedNodeIndex)
+{
+	cout << "-Restoring induced conflict set of node:" << inducedNodeIndex << endl;
+
+	this->CurrentGraph[inducedNodeIndex]->inducedConflictSet.clear();
 }
 
 
@@ -689,6 +721,7 @@ bool KcolorGraphProblem::assignNextValue(int nodeIndex)
 	else
 	{
 		//assign next color available
+		++numberOfChecks;
 		this->CurrentGraph[nodeIndex]->AsignedColor = this->CurrentGraph[nodeIndex]->temporalColorDomain[0];
 
 		this->CurrentGraph[nodeIndex]->temporalColorDomain.pop_front();
@@ -700,7 +733,7 @@ bool KcolorGraphProblem::assignNextValue(int nodeIndex)
 	}
 }
 
-bool KcolorGraphProblem::assignNextValueAddingToBackup(int nodeIndex)
+bool KcolorGraphProblem::assignNextValueAddingToBackupDomain(int nodeIndex)
 {
 	if (this->CurrentGraph[nodeIndex]->temporalColorDomain.size() == 0)
 	{
@@ -727,8 +760,6 @@ bool KcolorGraphProblem::assignNextValueAddingToBackup(int nodeIndex)
 	}
 	return true;
 }
-
-
 
 void KcolorGraphProblem::restoreCheckForwardDeletions(int causeNodeIndex)
 {

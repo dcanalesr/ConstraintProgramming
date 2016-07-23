@@ -21,6 +21,7 @@ public:
 	KcolorGraphNode();
 	std::deque<KcolorGraphNode *> checkPastConstraints();
 	bool checkPastConstraintsBreak();
+	bool checkPastConstraintsBreakAddingToConflictSet();
 	void checkPastConstraintsPrint();
 	void printTemporalDomain();
 	void printConstraints();
@@ -45,8 +46,12 @@ public:
 	void printAncestors();
 	void printFutureConnectedVariables();
 	void printInducedAncestors();
+	void printInducedConflictSet();
 
 	void induceAncestors(KcolorGraphNode * futureNode);
+
+	void induceConflictSet(KcolorGraphNode * futureNode);
+
 	void restoreInducedAncestors();
 
 	/*
@@ -54,16 +59,17 @@ public:
 	 */
 	KcolorGraphNode * getMosRecentInstancedInducedAncestor();
 
+	KcolorGraphNode * getMostRecentInstancedInducedConflict();
+
 
 	std::map<int,KcolorGraphNode *> ancestors;
 	std::map<int,KcolorGraphNode *> inducedAncestors;
-
 	std::map<int,KcolorGraphNode *> futureConnectedVariables;
 
+	std::map<int,KcolorGraphNode *> inducedConflictSet;
+
+
 	std::deque<std::string> backupTemporalDomain;
-
-private:
-
 
 
 };

@@ -22,6 +22,8 @@ BackTrack::BackTrack(int problemSize_,std::string problemType, bool isOptimizati
 
 	if(this->problemSize==4)
 			this->problem->initializeExample();
+	else if(this->problemSize==7)
+				this->problem->initializeExampleBackTrackGbj();
 	else
 		this->problem->initialize(this->problemSize,1);
 
@@ -83,6 +85,7 @@ void BackTrack::Start(){
 		{
 			//return to the i-1 variable (-2 because the "for" will add 1 on the next loop).
 			i-=2;
+			++this->problem->numberOfDeadEnds;
 		}
 		//check if the graph finished instantiating all nodes.
 
@@ -129,6 +132,8 @@ bool BackTrack::label(int n)
 	}
 	//Backtrack is needed, restore the backup made.
 	if(n-1>=0)
+	{
 		this->problem->restoreDomain(n);
+	}
 	return false; //return false in the default case.
 }

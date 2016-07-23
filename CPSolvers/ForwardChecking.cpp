@@ -23,6 +23,8 @@ ForwardChecking::ForwardChecking(int problemSize_ ,std::string problemType, bool
 
 	if(this->problemSize==4)
 			this->problem->initializeExample();
+	else if(this->problemSize==7)
+			this->problem->initializeExampleBackTrackGbj();
 	else
 		this->problem->initialize(this->problemSize,1);
 
@@ -73,6 +75,7 @@ void ForwardChecking::Start(){
 		//Trying to label variable i.
 		else if(!label(i))
 		{
+			++this->problem->numberOfDeadEnds;
 
 			//return to the i-1 variable (-2 because the "for" will add 1 on the next loop).
 			i-=2;
