@@ -15,6 +15,13 @@ KcolorGraphProblem::KcolorGraphProblem()
 	numberOfChecks=0;
 
 	this->numberOfDeadEnds=0;
+	this->numberOfConstraints=0;
+	this->meanOfConstraintsPerNode=0;
+	this->numberOfNodesUnderMeanConstraints=0;
+	this->numberOfNodesOverMeanConstraints=0;
+	this->meanOfDomainSizePerNode=0;
+	this->numberOfNodesUnderMeanDomainSize=0;
+	this->numberOfNodesOverMeanDomainSize=0;
 
 }
 
@@ -89,6 +96,52 @@ void KcolorGraphProblem::initialize(int size, int orderingHeuristicOption)
 	//-------------------------------------------------------------------------------------
 
 }
+
+void KcolorGraphProblem::computeProblemTopographyStatistics()
+{
+
+
+	//Compute number of total constraints
+	//compute mean of constraints per node
+	//compute mean size of domains.
+
+
+	for(int i=0;i<this->CurrentGraph.size();i++)
+	{
+		this->numberOfConstraints += this->CurrentGraph[i]->constraints.size();
+		this->meanOfConstraintsPerNode += this->CurrentGraph[i]->constraints.size();
+		this->meanOfDomainSizePerNode += this->CurrentGraph[i]->originalColorDomain.size();
+	}
+
+	this->meanOfConstraintsPerNode = this->meanOfConstraintsPerNode/this->CurrentGraph.size();
+	this->meanOfDomainSizePerNode = this->meanOfDomainSizePerNode / this->CurrentGraph.size();
+
+
+	//compute number of nodes with more constraints than the mean per node.
+	//compute number of nodes with less constraints than the mean per node.
+
+	//compute number of nodes with domains greater than the mean.
+	//compute number of nodes with domains bigger than the mean.
+
+
+	for(int i=0;i<this->CurrentGraph.size();i++)
+	{
+		if(this->CurrentGraph[i]->constraints.size() < this->meanOfConstraintsPerNode)
+			++this->numberOfNodesUnderMeanConstraints;
+		else
+			++this->numberOfNodesOverMeanConstraints;
+
+		if(this->CurrentGraph[i]->originalColorDomain.size() < this->meanOfDomainSizePerNode)
+			++this->numberOfNodesUnderMeanDomainSize;
+		else
+		{
+			++this->numberOfNodesOverMeanDomainSize;
+		}
+
+	}
+}
+
+
 
 void KcolorGraphProblem::initializeExample()
 {
@@ -542,8 +595,19 @@ void KcolorGraphProblem::printFinalResults()
 {
 	float finaltime = Control::elapsedTime();
 
+	this->computeProblemTopographyStatistics();
+
+
 	cout << "--------------------------------- Results of K-color Graph  ---------------------------------"<<endl;
+	cout << "--------------------"<<endl;
+	cout << "Graph Information: "<< endl;
 	cout << "- Number of nodes of the graph: "<< this->CurrentGraph.size()<<endl;
+	cout << "- Number of constraints of the graph: "<< this->numberOfConstraints << endl;
+	cout << "- Mean of constraints per node: "<< this->meanOfConstraintsPerNode << endl;
+	cout << "- Number of nodes with number of constraints under/over the mean of constraints: "<< this->numberOfNodesUnderMeanConstraints << "/"<< this->numberOfNodesOverMeanConstraints << endl;
+	cout << "- Mean of domain size per node: "<< this->meanOfDomainSizePerNode << endl;
+	cout << "- Number of nodes with domain size under/over the mean of domain size: "<< this->numberOfNodesUnderMeanDomainSize << "/"<< this->numberOfNodesOverMeanDomainSize << endl;
+	cout << "--------------------"<<endl;
 	cout << "- Number of instantiations done: "<< this->numberOfInstantiations<<endl;
 	cout << "- Number of domain checks done: "<< numberOfChecks <<endl;
 	cout << "- Number of deads ends found: " << this->numberOfDeadEnds << endl;

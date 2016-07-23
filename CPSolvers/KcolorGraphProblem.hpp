@@ -18,8 +18,16 @@ public:
 		std::deque<KcolorGraphNode *> CurrentGraph;
 		std::deque<KcolorGraphNode *> BestGraph;
 		int BestOFValue;
-
 		int numberOfInstantiations;
+		int numberOfConstraints;
+		float meanOfConstraintsPerNode;
+		int numberOfNodesUnderMeanConstraints;
+		int numberOfNodesOverMeanConstraints;
+		float meanOfDomainSizePerNode;
+		int numberOfNodesUnderMeanDomainSize;
+		int numberOfNodesOverMeanDomainSize;
+
+
 
 		KcolorGraphProblem();
 
@@ -27,7 +35,7 @@ public:
 		void initializeExampleBackTrackGbj();
 		void initialize(int size, int orderingHeuristicOption);
 
-
+		void computeProblemTopographyStatistics();
 
 		void printAllDomains();
 		void printAllConstraints();

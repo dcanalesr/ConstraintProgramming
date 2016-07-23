@@ -66,6 +66,7 @@ void BackTrack::Start(){
 
 	cout << "\t\t\t\t Starting Backtrack for K-coloring graph" << endl;
 
+
 	Control::resetElapsedTime();
 
 	//for each node in the graph.
