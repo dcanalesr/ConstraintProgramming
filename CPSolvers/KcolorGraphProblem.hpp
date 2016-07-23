@@ -39,7 +39,8 @@ public:
 
 		void printAllDomains();
 		void printAllConstraints();
-		void printFinalResults();
+		void printFinalResults(bool forCsv);
+		void printFinalResultsCSV();
 
 		void saveBackupTemporalDomain(int backupNodeIndex);
 		bool assignNextValue(int nodeIndex);

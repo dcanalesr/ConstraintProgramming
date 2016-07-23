@@ -591,49 +591,95 @@ bool KcolorGraphProblem::wakeUpMinimalFilters(int futureNodeIndex, int indexNode
 /*
  * Print in screen the results of searching a solution.
  */
-void KcolorGraphProblem::printFinalResults()
+void KcolorGraphProblem::printFinalResults(bool forCsv)
+{
+	this->computeProblemTopographyStatistics();
+
+	if(forCsv)
+		this->printFinalResultsCSV();
+	else
+	{
+
+		float finaltime = Control::elapsedTime();
+
+
+		cout << "--------------------------------- Results of K-color Graph  ---------------------------------"<<endl;
+		cout << "--------------------"<<endl;
+		cout << "Graph Information: "<< endl;
+		cout << "- Number of nodes of the graph: "<< this->CurrentGraph.size()<<endl;
+		cout << "- Number of constraints of the graph: "<< this->numberOfConstraints << endl;
+		cout << "- Mean of constraints per node: "<< this->meanOfConstraintsPerNode << endl;
+		cout << "- Number of nodes with number of constraints under/over the mean of constraints: "<< this->numberOfNodesUnderMeanConstraints << "/"<< this->numberOfNodesOverMeanConstraints << endl;
+		cout << "- Mean of domain size per node: "<< this->meanOfDomainSizePerNode << endl;
+		cout << "- Number of nodes with domain size under/over the mean of domain size: "<< this->numberOfNodesUnderMeanDomainSize << "/"<< this->numberOfNodesOverMeanDomainSize << endl;
+		cout << "--------------------"<<endl;
+		cout << "- Number of instantiations done: "<< this->numberOfInstantiations<<endl;
+		cout << "- Number of domain checks done: "<< numberOfChecks <<endl;
+		cout << "- Number of deads ends found: " << this->numberOfDeadEnds << endl;
+		cout << "- Elapsed time of algorithm: "<< finaltime<<endl;
+
+
+
+		bool solucion=false;
+		if (this->BestOFValue < 50000000)
+			solucion = true;
+		if (solucion)
+		{
+
+			cout << "- The objective function value is:  " << this->BestOFValue << " (distinct colors)" << endl;
+			cout << "- Printing the Graph: " << endl;
+			for (int i = 0; i < this->BestGraph.size(); i++)
+			{
+				cout << "Node: " << this->BestGraph[i]->ID
+						<< " - Color " << this->BestGraph[i]->AsignedColor << endl;
+			}
+		}
+		else
+		{
+			cout << "- The graph doesn't have a solution" << endl;
+		}
+	}
+}
+
+
+void KcolorGraphProblem::printFinalResultsCSV()
 {
 	float finaltime = Control::elapsedTime();
 
-	this->computeProblemTopographyStatistics();
 
+	/*
+	cout << "'Number of Nodes','Number of constraints','Mean of constraints', "
+	     <<"'Nodes under mean of constraints','Nodes under mean of constraints'"
+		 <<"'Mean domain size"
+		 <<"'Nodes under mean of domain size','Nodes under mean domain size'"
+		 <<"'Instantiations', 'Checks', 'Dead ends', 'Time','Solution found'"
+		 <<endl;
+	*/
 
-	cout << "--------------------------------- Results of K-color Graph  ---------------------------------"<<endl;
-	cout << "--------------------"<<endl;
-	cout << "Graph Information: "<< endl;
-	cout << "- Number of nodes of the graph: "<< this->CurrentGraph.size()<<endl;
-	cout << "- Number of constraints of the graph: "<< this->numberOfConstraints << endl;
-	cout << "- Mean of constraints per node: "<< this->meanOfConstraintsPerNode << endl;
-	cout << "- Number of nodes with number of constraints under/over the mean of constraints: "<< this->numberOfNodesUnderMeanConstraints << "/"<< this->numberOfNodesOverMeanConstraints << endl;
-	cout << "- Mean of domain size per node: "<< this->meanOfDomainSizePerNode << endl;
-	cout << "- Number of nodes with domain size under/over the mean of domain size: "<< this->numberOfNodesUnderMeanDomainSize << "/"<< this->numberOfNodesOverMeanDomainSize << endl;
-	cout << "--------------------"<<endl;
-	cout << "- Number of instantiations done: "<< this->numberOfInstantiations<<endl;
-	cout << "- Number of domain checks done: "<< numberOfChecks <<endl;
-	cout << "- Number of deads ends found: " << this->numberOfDeadEnds << endl;
-	cout << "- Elapsed time of algorithm: "<< finaltime<<endl;
-
+	cout <<this->CurrentGraph.size()<<","
+		 <<this->numberOfConstraints << ","
+		 <<this->meanOfConstraintsPerNode << ","
+	 	 <<this->numberOfNodesUnderMeanConstraints << ","
+	 	 <<this->numberOfNodesOverMeanConstraints << ","
+		 <<this->meanOfDomainSizePerNode << ","
+		 <<this->numberOfNodesUnderMeanDomainSize << ","
+		 <<this->numberOfNodesOverMeanDomainSize << ","
+		 <<this->numberOfInstantiations << ","
+		 <<numberOfChecks << ","
+		 <<this->numberOfDeadEnds<<","
+		 <<finaltime << ",";
 
 
 	bool solucion=false;
 	if (this->BestOFValue < 50000000)
-		solucion = true;
-	if (solucion)
-	{
-
-		cout << "- The objective function value is:  " << this->BestOFValue << " (distinct colors)" << endl;
-		cout << "- Printing the Graph: " << endl;
-		for (int i = 0; i < this->BestGraph.size(); i++)
-		{
-			cout << "Node: " << this->BestGraph[i]->ID
-					<< " - Color " << this->BestGraph[i]->AsignedColor << endl;
-		}
-	}
+		cout<< "Yes"<<endl;
 	else
 	{
-		cout << "- The graph doesn't have a solution" << endl;
+		cout << "No"<<endl;
 	}
+
 }
+
 
 /*
  * Assuming a node "causeNode" is applying a filter on "filteredNode".

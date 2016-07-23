@@ -4,11 +4,12 @@ using namespace std;
 #include <deque>
 
 
-BackTrack::BackTrack(int problemSize_,std::string problemType, bool isOptimization_)
+BackTrack::BackTrack(int problemSize_,std::string problemType, bool isOptimization_ , bool forCsv_)
 {
 
 	this->isOptimization = isOptimization_;
 	this->problemSize = problemSize_;
+	this->forCsv = forCsv_;
 
 
 
@@ -39,9 +40,10 @@ BackTrack::BackTrack(int problemSize_,std::string problemType, bool isOptimizati
 
 }
 
-BackTrack::BackTrack(string problemType, string instanceFilename, bool isOptimization_)
+BackTrack::BackTrack(string problemType, string instanceFilename, bool isOptimization_ , bool forCsv_)
 {
 	this->isOptimization = isOptimization_;
+	this->forCsv = forCsv_;
 
 
 	cout << "problemType: "<<problemType<<"."<<endl;
@@ -102,7 +104,7 @@ void BackTrack::Start(){
 	}
 
 
-	this->problem->printFinalResults();
+	this->problem->printFinalResults(this->forCsv);
 }
 
 

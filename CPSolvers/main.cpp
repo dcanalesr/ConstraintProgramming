@@ -8,7 +8,7 @@ using namespace std;
 
 
 
-bool handleParams(int argc, char* argv[], int &seed, string &problem, int &problemSize, string &algorithm, string &instanceFilename, bool& isOptimization);
+bool handleParams(int argc, char* argv[], int &seed, string &problem, int &problemSize, string &algorithm, string &instanceFilename, bool& isOptimization, bool &forCsv);
 void defaultErrorMessage(int argc, char* argv[]);
 
 int main(int argc,char* argv[])
@@ -19,8 +19,9 @@ int main(int argc,char* argv[])
 	string instanceFilename ="";
 
 	bool isOptimization=false;
+	bool forCsv = false;
 
-	bool resp = handleParams(argc,argv,seed, problemType, problemSize, algorithm,instanceFilename, isOptimization);
+	bool resp = handleParams(argc,argv,seed, problemType, problemSize, algorithm,instanceFilename, isOptimization, forCsv);
 
 
 	if(resp)
@@ -34,13 +35,13 @@ int main(int argc,char* argv[])
 
 			if(instanceFilename!="")
 			{
-				bt = new BackTrack(problemType,instanceFilename, isOptimization);
+				bt = new BackTrack(problemType,instanceFilename, isOptimization, forCsv);
+
 			}
 			else
 			{
-				bt = new BackTrack(problemSize,problemType, isOptimization);
+				bt = new BackTrack(problemSize,problemType, isOptimization, forCsv);
 			}
-
 			bt->Start();
 		}
 		else if(algorithm == "fc")
@@ -49,11 +50,11 @@ int main(int argc,char* argv[])
 
 			if(instanceFilename!="")
 			{
-				fc = new ForwardChecking(problemType,instanceFilename, isOptimization);
+				fc = new ForwardChecking(problemType,instanceFilename, isOptimization, forCsv);
 			}
 			else
 			{
-				fc = new ForwardChecking(problemSize,problemType, isOptimization);
+				fc = new ForwardChecking(problemSize,problemType, isOptimization, forCsv);
 			}
 			fc->Start();
 		}
@@ -63,11 +64,11 @@ int main(int argc,char* argv[])
 
 			if(instanceFilename!="")
 			{
-				mfc = new MinimalForwardChecking(problemType,instanceFilename,isOptimization);
+				mfc = new MinimalForwardChecking(problemType,instanceFilename,isOptimization, forCsv);
 			}
 			else
 			{
-				mfc = new MinimalForwardChecking(problemSize,problemType,isOptimization);
+				mfc = new MinimalForwardChecking(problemSize,problemType,isOptimization, forCsv);
 			}
 			mfc->Start();
 		}
@@ -77,11 +78,11 @@ int main(int argc,char* argv[])
 
 			if(instanceFilename!="")
 			{
-				btgbj = new BackTrackGbj(problemType,instanceFilename, isOptimization);
+				btgbj = new BackTrackGbj(problemType,instanceFilename, isOptimization, forCsv);
 			}
 			else
 			{
-				btgbj = new BackTrackGbj(problemSize,problemType, isOptimization);
+				btgbj = new BackTrackGbj(problemSize,problemType, isOptimization, forCsv);
 			}
 			btgbj->Start();
 
@@ -92,11 +93,11 @@ int main(int argc,char* argv[])
 
 			if(instanceFilename!="")
 			{
-				btcbj = new BackTrackCbj(problemType,instanceFilename, isOptimization);
+				btcbj = new BackTrackCbj(problemType,instanceFilename, isOptimization, forCsv);
 			}
 			else
 			{
-				btcbj = new BackTrackCbj(problemSize,problemType, isOptimization);
+				btcbj = new BackTrackCbj(problemSize,problemType, isOptimization, forCsv);
 			}
 			btcbj->Start();
 
@@ -108,11 +109,11 @@ int main(int argc,char* argv[])
 	}
 }
 
-bool handleParams(int argc, char* argv[], int &seed,string &problem, int &problemSize, string &algorithm, string &instanceFilename, bool& isOptimization )
+bool handleParams(int argc, char* argv[], int &seed,string &problem, int &problemSize, string &algorithm, string &instanceFilename, bool& isOptimization,bool &forCsv)
 {
 
 	const int kExpectedArgc = 11;
-	if (argc != kExpectedArgc)
+	if (argc < kExpectedArgc)
 	{
 		defaultErrorMessage(argc,argv);
 	    return false;
@@ -163,6 +164,10 @@ bool handleParams(int argc, char* argv[], int &seed,string &problem, int &proble
 			   algorithm = argv[++i];
 			   paramsCollected++;
 		   }
+		   else if(strcmp(argv[i], "-csv")==0)
+		   {
+			   forCsv = true;
+		   }
 		}
 		if(paramsCollected>=4)
 			return true;
@@ -185,6 +190,7 @@ void defaultErrorMessage(int argc, char* argv[])
 	   << "-if instanceFileName (do not specify -ps option using this)"
 	   << "-is isOptimization"
 	   << "-a algorithm "
+	   << "-csv (optional to print quiet results with comma separated)"
 	   << endl
 	   << "Options for problem are: ColorGraph" <<endl
 	   << "Options for algorithm are: bt, fc, mfc, btgbj, btcbj " << endl

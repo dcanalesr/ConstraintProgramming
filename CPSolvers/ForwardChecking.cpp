@@ -11,11 +11,11 @@ using namespace std;
 #include <string>
 
 
-ForwardChecking::ForwardChecking(int problemSize_ ,std::string problemType, bool isOptimization_)
+ForwardChecking::ForwardChecking(int problemSize_ ,std::string problemType, bool isOptimization_ , bool forCsv_)
 {
 	this->isOptimization = isOptimization_;
 	this->problemSize = problemSize_;
-
+	this->forCsv = forCsv_;
 
 
 
@@ -37,10 +37,10 @@ ForwardChecking::ForwardChecking(int problemSize_ ,std::string problemType, bool
 	this->problem->initializeAncestorsFutureConnectedVariables();
 
 }
-ForwardChecking::ForwardChecking(string problemType, string instanceFilename, bool isOptimization_)
+ForwardChecking::ForwardChecking(string problemType, string instanceFilename, bool isOptimization_ , bool forCsv_)
 {
 	this->isOptimization = isOptimization_;
-
+	this->forCsv = forCsv_;
 	cout << "problemType: "<<problemType<<"."<<endl;
 
 	FileHandler fileHandler(instanceFilename);
@@ -89,7 +89,7 @@ void ForwardChecking::Start(){
 				break; //REMOVE THIS IN ORDER TO GET A OPTIMIZATION PROBLEM.
 		}
 	}
-	this->problem->printFinalResults();
+	this->problem->printFinalResults(this->forCsv);
 }
 
 /*
